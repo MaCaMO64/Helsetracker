@@ -57,6 +57,10 @@ async function upsertMedOffline(
   leggIKo({ id: nyId(), tabell, konflikt: onConflict, rad, opprettet: new Date().toISOString() })
 }
 
+function erOnline(): boolean {
+  return typeof navigator === 'undefined' || navigator.onLine
+}
+
 // ── Medisiner ──────────────────────────────────────────────────────
 export interface MedisinInn {
   id?: string
@@ -174,8 +178,34 @@ export function useLagreDose() {
       }
       await upsertMedOffline('medication_doses', rad, 'id')
     },
-    onSuccess: (_r, d) =>
-      qc.invalidateQueries({ queryKey: ['doser'], predicate: (q) => q.queryKey[1] === d.dato }),
+    // Optimistisk: vis dosen umiddelbart, rull tilbake ved feil.
+    onMutate: async (d: DoseInn) => {
+      const key = ['doser', d.dato]
+      await qc.cancelQueries({ queryKey: key })
+      const forrige = qc.getQueryData<Dose[]>(key)
+      const opt: Dose = {
+        id: d.id ?? '__ny__',
+        medication_id: d.medication_id,
+        dato: d.dato,
+        dose: d.dose,
+        tidspunkt: d.tidspunkt ?? null,
+        notat: d.notat ?? null,
+        opprettet: new Date().toISOString(),
+      }
+      qc.setQueryData<Dose[]>(key, (g = []) =>
+        d.id && g.some((x) => x.id === d.id)
+          ? g.map((x) => (x.id === d.id ? { ...x, ...opt } : x))
+          : [...g, opt],
+      )
+      return { key, forrige }
+    },
+    onError: (_e, _d, ctx) => {
+      if (ctx) qc.setQueryData(ctx.key, ctx.forrige)
+    },
+    onSettled: (_r, _e, d) => {
+      if (erOnline())
+        qc.invalidateQueries({ queryKey: ['doser'], predicate: (q) => q.queryKey[1] === d.dato })
+    },
   })
 }
 
@@ -186,7 +216,17 @@ export function useSlettDose() {
       const { error } = await klient().from('medication_doses').delete().eq('id', id)
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['doser'] }),
+    onMutate: async (id: string) => {
+      await qc.cancelQueries({ queryKey: ['doser'] })
+      const snapshots = qc.getQueriesData<Dose[]>({ queryKey: ['doser'] })
+      for (const [key, data] of snapshots)
+        qc.setQueryData<Dose[]>(key, (data ?? []).filter((x) => x.id !== id))
+      return { snapshots }
+    },
+    onError: (_e, _id, ctx) => {
+      ctx?.snapshots.forEach(([key, data]) => qc.setQueryData(key, data))
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: ['doser'] }),
   })
 }
 
@@ -304,8 +344,33 @@ export function useLagreSymptomOppf() {
       }
       await upsertMedOffline('symptom_entries', rad, 'symptom_id,dato')
     },
-    onSuccess: (_r, s) =>
-      qc.invalidateQueries({ queryKey: ['symptomOppf'], predicate: (q) => q.queryKey[1] === s.dato }),
+    onMutate: async (s: SymptomOppfInn) => {
+      const key = ['symptomOppf', s.dato]
+      await qc.cancelQueries({ queryKey: key })
+      const forrige = qc.getQueryData<SymptomOppforing[]>(key)
+      qc.setQueryData<SymptomOppforing[]>(key, (g = []) => [
+        ...g.filter((o) => o.symptom_id !== s.symptom_id),
+        {
+          id: `__ny__${s.symptom_id}`,
+          symptom_id: s.symptom_id,
+          dato: s.dato,
+          verdi: s.verdi,
+          notat: s.notat ?? null,
+          opprettet: new Date().toISOString(),
+        },
+      ])
+      return { key, forrige }
+    },
+    onError: (_e, _s, ctx) => {
+      if (ctx) qc.setQueryData(ctx.key, ctx.forrige)
+    },
+    onSettled: (_r, _e, s) => {
+      if (erOnline())
+        qc.invalidateQueries({
+          queryKey: ['symptomOppf'],
+          predicate: (q) => q.queryKey[1] === s.dato,
+        })
+    },
   })
 }
 
@@ -316,7 +381,17 @@ export function useSlettSymptomOppf() {
       const { error } = await klient().from('symptom_entries').delete().eq('id', id)
       if (error) throw error
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['symptomOppf'] }),
+    onMutate: async (id: string) => {
+      await qc.cancelQueries({ queryKey: ['symptomOppf'] })
+      const snapshots = qc.getQueriesData<SymptomOppforing[]>({ queryKey: ['symptomOppf'] })
+      for (const [key, data] of snapshots)
+        qc.setQueryData<SymptomOppforing[]>(key, (data ?? []).filter((o) => o.id !== id))
+      return { snapshots }
+    },
+    onError: (_e, _id, ctx) => {
+      ctx?.snapshots.forEach(([key, data]) => qc.setQueryData(key, data))
+    },
+    onSettled: () => qc.invalidateQueries({ queryKey: ['symptomOppf'] }),
   })
 }
 

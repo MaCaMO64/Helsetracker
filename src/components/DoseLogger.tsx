@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useLagreDose, useSlettDose } from '../lib/db'
+import { nyId } from '../lib/id'
 import type { Dose, Medisin } from '../lib/types'
 
-/** Én dose-rad (klokkeslett + mengde). Lagres når et felt forlates. */
+/** Én dose-rad (klokkeslett + mengde). `radId` er stabil: for nye rader er den
+ *  utkast-id-en som ALSO blir server-id ved lagring, så raden ikke remonteres når
+ *  den går fra utkast til lagret. Lagres når et felt forlates. */
 function DoseRad({
   medisin,
   dato,
+  radId,
   dose,
 }: {
   medisin: Medisin
   dato: string
+  radId: string
   dose?: Dose
 }) {
   const lagre = useLagreDose()
@@ -32,7 +37,7 @@ function DoseRad({
     if (!Number.isFinite(n)) return
     const nyTid = tid || null
     if (dose && n === dose.dose && nyTid === (dose.tidspunkt ?? null)) return // uendret
-    lagre.mutate({ id: dose?.id, medication_id: medisin.id, dato, dose: n, tidspunkt: nyTid })
+    lagre.mutate({ id: radId, medication_id: medisin.id, dato, dose: n, tidspunkt: nyTid })
   }
 
   const lagret = !!dose && verdi.trim().replace(',', '.') === String(dose.dose) && !lagre.isPending
@@ -75,24 +80,43 @@ function DoseRad({
   )
 }
 
-/** Alle doser for én medisin på en dag: viser eksisterende + tomme felter opp til
- *  medisinens «doser per dag», og lar deg legge til flere. */
+/** Alle doser for én medisin på en dag: lagrede rader + tomme utkast-rader opp til
+ *  medisinens «doser per dag», med «+ Ny dose» for flere. */
 export function DoseLogger({
   medisin,
   doser,
   dato,
+  klar,
 }: {
   medisin: Medisin
   doser: Dose[]
   dato: string
+  klar: boolean
 }) {
   const [ekstra, setEkstra] = useState(0)
+  const [draftIds, setDraftIds] = useState<string[]>([])
 
   const mine = doser
     .filter((d) => d.medication_id === medisin.id)
     .sort((a, b) => (a.tidspunkt ?? '').localeCompare(b.tidspunkt ?? ''))
+  const mineNokkel = mine.map((d) => d.id).join(',')
+  const onsketTomme = Math.max(0, Math.max(1, medisin.doser_per_dag) - mine.length) + ekstra
 
-  const tommeSlots = Math.max(0, Math.max(medisin.doser_per_dag, 1) - mine.length) + ekstra
+  // Hold antall tomme utkast-rader riktig – uten å remontere de som fylles ut.
+  useEffect(() => {
+    if (!klar) return
+    const finnes = new Set(mineNokkel ? mineNokkel.split(',') : [])
+    setDraftIds((prev) => {
+      const aktive = prev.filter((id) => !finnes.has(id)) // dropp utkast som ble lagret
+      if (aktive.length === onsketTomme) return aktive.length === prev.length ? prev : aktive
+      if (aktive.length < onsketTomme)
+        return [...aktive, ...Array.from({ length: onsketTomme - aktive.length }, () => nyId())]
+      return aktive.slice(0, onsketTomme)
+    })
+  }, [klar, onsketTomme, mineNokkel])
+
+  const mineIds = new Set(mine.map((d) => d.id))
+  const synligeDrafts = draftIds.filter((id) => !mineIds.has(id))
 
   return (
     <div className="py-2.5">
@@ -109,10 +133,10 @@ export function DoseLogger({
         </button>
       </div>
       {mine.map((d) => (
-        <DoseRad key={d.id} medisin={medisin} dato={dato} dose={d} />
+        <DoseRad key={d.id} medisin={medisin} dato={dato} radId={d.id} dose={d} />
       ))}
-      {Array.from({ length: tommeSlots }).map((_, i) => (
-        <DoseRad key={`ny-${mine.length}-${i}`} medisin={medisin} dato={dato} />
+      {synligeDrafts.map((id) => (
+        <DoseRad key={id} medisin={medisin} dato={dato} radId={id} />
       ))}
     </div>
   )

@@ -12,7 +12,7 @@ export function IdagPage() {
 
   const { data: medisiner = [], isLoading: lasterMed } = useMedisiner()
   const { data: symptomer = [], isLoading: lasterSym } = useSymptomer()
-  const { data: doser = [] } = useDoser(dato)
+  const { data: doser = [], isLoading: lasterDoser } = useDoser(dato)
   const { data: oppforinger = [] } = useSymptomOppforinger(dato)
 
   const aktiveMed = medisiner.filter((m) => m.aktiv)
@@ -68,7 +68,7 @@ export function IdagPage() {
               <h2 className="mb-1 text-sm font-semibold text-slate-800">💊 Doser</h2>
               <div className="divide-y divide-slate-100">
                 {aktiveMed.map((m) => (
-                  <DoseLogger key={m.id} medisin={m} doser={doser} dato={dato} />
+                  <DoseLogger key={m.id} medisin={m} doser={doser} dato={dato} klar={!lasterDoser} />
                 ))}
               </div>
             </Card>
