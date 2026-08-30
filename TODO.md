@@ -67,8 +67,11 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
       `garminEksport.ts` + `garminZip.ts` → garmin_daily via RLS; forhåndsvisning) + tester
 - [ ] DU: kjør migrasjon 0003 i SQL Editor
 
+## M9 – Hendelser ✅
+- [x] Legg til/rediger/slett hendelser (doseendring/legebesøk/notat) i Historikk
+- [x] Hendelser vist som markører i Analyse-grafen (lilla), doseendringer (grå)
+
 ## Senere / idébank
-- [ ] Hendelser-UI (preparatbytte/legebesøk) + hendelsesmarkører i Analyse
 - [ ] Kobling mot Matplanlegger (daglig ernæringsoppsummering join på dato)
 - [ ] Intraday Garmin-data (søvnfaser, HRV om natten) hvis daglig ikke er nok
 - [ ] Påminnelser om å logge

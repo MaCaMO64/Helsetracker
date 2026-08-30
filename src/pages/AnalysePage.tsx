@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   useDoserPeriode,
   useGarminPeriode,
+  useHendelser,
   useLabResultater,
   useMedisiner,
   useSymptomer,
@@ -68,6 +69,7 @@ export function AnalysePage() {
   const { data: oppforinger = [] } = useSymptomOppfPeriode(fra, til)
   const { data: garminDager = [] } = useGarminPeriode(fra, til)
   const { data: labResultater = [] } = useLabResultater(fra, til)
+  const { data: hendelser = [] } = useHendelser(fra, til)
 
   // Bygg alle valgbare serier.
   const valg = useMemo<SerieValg[]>(() => {
@@ -118,16 +120,19 @@ export function AnalysePage() {
   const doseValg = valg.filter((v) => v.erDose)
   const responsValg = valg.filter((v) => !v.erDose && v.serie.length > 0)
 
-  // Doseendring-markører fra alle medisiner.
+  // Markører: doseendringer (grå) + hendelser (lilla).
   const markorer = useMemo<GrafMarkor[]>(
-    () =>
-      doseValg.flatMap((v) =>
+    () => [
+      ...doseValg.flatMap((v) =>
         finnDoseendringer(v.serie).map((e) => ({
           dato: e.dato,
           label: `${v.label}: ${e.fra}→${e.til}`,
+          farge: '#94a3b8',
         })),
       ),
-    [doseValg],
+      ...hendelser.map((h) => ({ dato: h.dato, label: h.tittel, farge: FARGE_B })),
+    ],
+    [doseValg, hendelser],
   )
 
   // Overlay-valg (A/B).

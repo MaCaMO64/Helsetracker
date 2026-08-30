@@ -10,6 +10,7 @@ export interface GrafSerie {
 export interface GrafMarkor {
   dato: string
   label?: string
+  farge?: string
 }
 
 const B = 720
@@ -97,7 +98,7 @@ export function Graf({
         {markorer.length > 0 && (
           <span className="flex items-center gap-1.5 text-slate-500">
             <span className="inline-block h-3 w-0 border-l-2 border-dashed border-slate-400" />
-            Doseendring
+            Doseendring / hendelse
           </span>
         )}
       </div>
@@ -147,7 +148,8 @@ export function Graf({
                 x2={x(m.dato)}
                 y1={PT}
                 y2={PT + innerH}
-                className="stroke-slate-300"
+                stroke={m.farge ?? '#cbd5e1'}
+                strokeWidth={1.5}
                 strokeDasharray="4 3"
               />
             ))}
