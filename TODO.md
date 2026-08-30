@@ -27,13 +27,14 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
 - [x] Innstillinger: definer egne medisiner (enhet, standarddose) og symptomer (skala)
 - [ ] Hendelser (events): «økte dose til X», legebesøk – UI for å legge inn (vises alt i Historikk)
 
-## M4 – Garmin-synk
-- [ ] Python-script (`python-garminconnect`/`garth`) – dagssammendrag
-- [ ] GitHub Actions: daglig cron + `workflow_dispatch` (manuell «synk nå»)
-- [ ] Backfill av historikk ved første kjøring (f.eks. 90 dager)
-- [ ] `GARMIN.md`: token-bootstrap (MFA lokalt → base64 → GitHub-secret)
-- [ ] Skriv til `garmin_daily` via service-role; logg til `garmin_sync_log`
-- [ ] Vis «siste vellykkede synk: X dager siden» i appen (dødmannsknapp)
+## M4 – Garmin-synk ✅ (kode) – gjenstår din bootstrap
+- [x] Python-script (`garmin_sync/sync.py`) – dagssammendrag, defensivt
+- [x] GitHub Actions: daglig cron + `workflow_dispatch` (manuell + backfill-dager)
+- [x] Backfill via manuell kjøring (`dager`-input)
+- [x] `bootstrap.py` + `GARMIN.md`: token-bootstrap (MFA lokalt → GitHub-secret)
+- [x] Skriv til `garmin_daily` via service-role; logg til `garmin_sync_log`
+- [x] Vis «siste vellykkede synk» i appen (GarminSeksjon, dødmannsknapp)
+- [ ] DU: kjør `bootstrap.py`, legg inn 4 GitHub-secrets, kjør backfill (se GARMIN.md)
 
 ## M5 – Analyse
 - [ ] Tidsseriegrafer med doseendring-markører (SVG)

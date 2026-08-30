@@ -3,6 +3,7 @@ import { APP_VERSJON } from '../lib/versjon'
 import { SideTittel, Card, Button } from '../components/ui'
 import { MedisinerSeksjon } from '../components/MedisinerSeksjon'
 import { SymptomerSeksjon } from '../components/SymptomerSeksjon'
+import { GarminSeksjon } from '../components/GarminSeksjon'
 
 export function InnstillingerPage() {
   const { bruker, loggUt } = useAuth()
@@ -12,6 +13,7 @@ export function InnstillingerPage() {
 
       <MedisinerSeksjon />
       <SymptomerSeksjon />
+      <GarminSeksjon />
 
       <Card className="p-5">
         <h2 className="text-sm font-semibold text-slate-800">Konto</h2>
@@ -28,7 +30,8 @@ export function InnstillingerPage() {
       <Card className="p-5">
         <h2 className="text-sm font-semibold text-slate-800">Kommer</h2>
         <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-500">
-          <li>Garmin-synk: status og «synk nå» (M4)</li>
+          <li>Analyse: grafer, doseendring-markører og korrelasjon (M5)</li>
+          <li>Eksport til lege: CSV/PDF (M6)</li>
         </ul>
       </Card>
 

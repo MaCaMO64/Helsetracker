@@ -1,0 +1,37 @@
+name: Garmin-synk
+
+# Daglig henting av Garmin-dagssammendrag → Supabase. Kan også kjøres manuelt
+# (med valgfritt antall dager for backfill) via «Run workflow» i Actions-fanen.
+on:
+  schedule:
+    - cron: '30 5 * * *' # 05:30 UTC daglig (~07:30 norsk tid) – etter nattens synk
+  workflow_dispatch:
+    inputs:
+      dager:
+        description: 'Antall dager bakover å hente (backfill, f.eks. 90)'
+        required: false
+        default: '3'
+
+# Unngå overlappende kjøringer.
+concurrency:
+  group: garmin-sync
+  cancel-in-progress: false
+
+jobs:
+  synk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r garmin_sync/requirements.txt
+      - name: Kjør synk
+        run: python garmin_sync/sync.py
+        env:
+          GARMIN_TOKENS: ${{ secrets.GARMIN_TOKENS }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          HT_USER_ID: ${{ secrets.HT_USER_ID }}
+          DAGER: ${{ github.event.inputs.dager || '3' }}
