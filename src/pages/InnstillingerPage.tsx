@@ -4,9 +4,12 @@ import { SideTittel, Card, Button } from '../components/ui'
 import { MedisinerSeksjon } from '../components/MedisinerSeksjon'
 import { SymptomerSeksjon } from '../components/SymptomerSeksjon'
 import { GarminSeksjon } from '../components/GarminSeksjon'
+import { VIS_VELKOMST } from '../components/Velkomst'
+import { useInstall } from '../lib/pwa'
 
 export function InnstillingerPage() {
   const { bruker, loggUt } = useAuth()
+  const { kanInstallere, installer, installert, erIOS } = useInstall()
   return (
     <div className="space-y-4">
       <SideTittel tittel="Innstillinger" />
@@ -28,11 +31,30 @@ export function InnstillingerPage() {
       </Card>
 
       <Card className="p-5">
-        <h2 className="text-sm font-semibold text-slate-800">Kommer</h2>
-        <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-500">
-          <li>Analyse: grafer, doseendring-markører og korrelasjon (M5)</li>
-          <li>Eksport til lege: CSV/PDF (M6)</li>
-        </ul>
+        <h2 className="text-sm font-semibold text-slate-800">📱 Appen</h2>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {!installert && kanInstallere && (
+            <Button variant="secondary" onClick={installer}>
+              Installer på hjemskjerm
+            </Button>
+          )}
+          <Button
+            variant="secondary"
+            onClick={() => window.dispatchEvent(new Event(VIS_VELKOMST))}
+          >
+            Vis «kom i gang»-guide
+          </Button>
+        </div>
+        {installert ? (
+          <p className="mt-2 text-xs text-slate-500">Appen er installert på denne enheten ✓</p>
+        ) : (
+          !kanInstallere &&
+          erIOS && (
+            <p className="mt-2 text-xs text-slate-500">
+              På iPhone: trykk Del-knappen og velg «Legg til på hjemskjerm».
+            </p>
+          )
+        )}
       </Card>
 
       <Card className="p-5">

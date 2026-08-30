@@ -3,6 +3,8 @@ import { useAuth } from '../lib/auth'
 import { useOfflineFlush } from '../lib/db'
 import { APP_VERSJON } from '../lib/versjon'
 import { LoggInn } from './LoggInn'
+import { OfflineBanner } from './OfflineBanner'
+import { Velkomst } from './Velkomst'
 
 const nav = [
   { to: '/', label: 'I dag', ikon: '📝', end: true },
@@ -59,10 +61,15 @@ export function Layout() {
         </div>
       </header>
 
+      <OfflineBanner />
+
       {/* Innhold */}
       <main className="mx-auto max-w-3xl px-4 pb-28 pt-4 md:pb-10">
         <Outlet />
       </main>
+
+      {/* Kom i gang-guide (første besøk, og på forespørsel fra Innstillinger) */}
+      <Velkomst />
 
       {/* Mobil bunnavigasjon */}
       <nav className="safe-bottom fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white md:hidden">

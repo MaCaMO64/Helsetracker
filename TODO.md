@@ -47,7 +47,8 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
 - [x] Utskrifts-/PDF-rapport for legetime (plainspråk, forbehold)
 - [x] Send CSV/rapport på e-post (Edge Function `send-rapport` via Resend)
 - [ ] DU: sett opp Resend + secrets + VITE_FUNCTIONS_URL (se EPOST.md) for e-post
-- [ ] PWA-polish, ikoner, flere tomtilstander (løpende)
+- [x] PWA-polish: offline-varsel, installer-knapp, «kom i gang»-guide (Velkomst)
+- [ ] PNG-ikoner for iOS (mangler rasteriserings-verktøy lokalt – SVG brukes nå)
 
 ## Senere / idébank
 - [ ] Kobling mot Matplanlegger (daglig ernæringsoppsummering join på dato)
