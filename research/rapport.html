@@ -1,0 +1,391 @@
+<title>Levotyroksin over tid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap"
+/>
+<style>
+  :root {
+    --ground: #f5f8f7;
+    --surface: #ffffff;
+    --ink: #16211f;
+    --muted: #5c6d6b;
+    --faint: #e3ebe9;
+    --accent: #0d7d72;
+    --accent-deep: #0f5f57;
+    --caution-bg: #fdf6ec;
+    --caution-ink: #8a5a12;
+    --caution-line: #e7d3ad;
+    --danger: #b4443a;
+    --shadow: 0 1px 2px rgba(16, 33, 31, 0.04), 0 8px 30px rgba(16, 33, 31, 0.06);
+    --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --sans: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --ground: #0c1211;
+      --surface: #121b19;
+      --ink: #e7efed;
+      --muted: #93a6a3;
+      --faint: #23302e;
+      --accent: #2fb3a4;
+      --accent-deep: #6fd8cc;
+      --caution-bg: #201a10;
+      --caution-ink: #e6c48a;
+      --caution-line: #4a3c22;
+      --danger: #e58a80;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 34px rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme='dark'] {
+    --ground: #0c1211;
+    --surface: #121b19;
+    --ink: #e7efed;
+    --muted: #93a6a3;
+    --faint: #23302e;
+    --accent: #2fb3a4;
+    --accent-deep: #6fd8cc;
+    --caution-bg: #201a10;
+    --caution-ink: #e6c48a;
+    --caution-line: #4a3c22;
+    --danger: #e58a80;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 34px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 18px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 44rem; margin: 0 auto; padding: clamp(1.5rem, 4vw, 4rem) 1.25rem 5rem; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 1rem;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 0 0 0.6rem;
+  }
+  .dek {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+    color: var(--muted);
+    margin: 0 0 2.2rem;
+    max-width: 34rem;
+  }
+
+  .lede {
+    background: var(--surface);
+    border: 1px solid var(--faint);
+    border-left: 3px solid var(--accent);
+    border-radius: 10px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: var(--shadow);
+    margin: 0 0 2rem;
+  }
+  .lede .k {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .lede p { margin: 0; font-size: 1.05rem; }
+
+  .caution {
+    background: var(--caution-bg);
+    border: 1px solid var(--caution-line);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    color: var(--caution-ink);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    margin: 2rem 0;
+  }
+  .caution strong { color: var(--caution-ink); }
+
+  section { margin-top: 3rem; }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3.4vw, 2rem);
+    line-height: 1.15;
+    text-wrap: balance;
+    margin: 0 0 1rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--faint);
+    display: flex;
+    gap: 0.9rem;
+    align-items: baseline;
+  }
+  h2 .num {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--accent);
+    flex: none;
+    padding-top: 0.35rem;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 1.02rem;
+    letter-spacing: 0.01em;
+    margin: 1.8rem 0 0.4rem;
+    color: var(--accent-deep);
+  }
+  p { margin: 0 0 1rem; }
+  a { color: var(--accent-deep); }
+
+  ul { margin: 0 0 1rem; padding-left: 0; list-style: none; }
+  li { position: relative; padding-left: 1.4rem; margin-bottom: 0.7rem; }
+  li::before {
+    content: '';
+    position: absolute;
+    left: 0.2rem;
+    top: 0.72em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  ol.steg { counter-reset: s; margin: 0 0 1rem; padding: 0; list-style: none; }
+  ol.steg li { counter-increment: s; padding-left: 2.2rem; }
+  ol.steg li::before {
+    content: counter(s);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: none;
+    width: auto;
+    height: auto;
+    top: 0.15em;
+    left: 0.2rem;
+  }
+
+  sup a {
+    font-family: var(--mono);
+    font-size: 0.62em;
+    text-decoration: none;
+    color: var(--accent);
+    padding: 0 0.05em;
+  }
+  sup a:hover { text-decoration: underline; }
+
+  .app-kort {
+    background: var(--surface);
+    border: 1px solid var(--faint);
+    border-radius: 12px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: var(--shadow);
+    margin-top: 1.2rem;
+  }
+  .app-kort h3 { margin-top: 0; }
+
+  .kilder { margin-top: 3.5rem; padding-top: 1.4rem; border-top: 1px solid var(--faint); }
+  .kilder h2 { border: 0; padding: 0; font-size: 1.25rem; display: block; }
+  ol.ref { counter-reset: r; list-style: none; padding: 0; margin: 1rem 0 0; font-size: 0.86rem; }
+  ol.ref li {
+    counter-increment: r;
+    padding-left: 2.4rem;
+    margin-bottom: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  ol.ref li::before {
+    content: '[' counter(r) ']';
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    position: absolute;
+    left: 0;
+    top: 0.15em;
+    background: none;
+    width: auto;
+    height: auto;
+  }
+  ol.ref a { word-break: break-word; }
+
+  footer { margin-top: 3rem; color: var(--muted); font-size: 0.82rem; line-height: 1.5; }
+
+  :target { scroll-margin-top: 1.5rem; }
+  a:focus-visible, sup a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: rise 0.6s ease forwards; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { animation: none; opacity: 1; transform: none; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="reveal">
+    <p class="eyebrow">Litteraturoppsummering</p>
+    <h1>Levotyroksin over tid</h1>
+    <p class="dek">
+      Hva forskningen sier om langtidsbehandling etter fjernet skjoldbruskkjertel – og hvorfor
+      en stabil dose kan endre seg.
+    </p>
+  </header>
+
+  <div class="lede reveal">
+    <span class="k">Kort svar</span>
+    <p>
+      Ja, man kan være stabil i årevis og så oppleve nye bivirkninger eller endret dosebehov –
+      men litteraturen peker nesten alltid på en <strong>identifiserbar utløser</strong> (ny
+      medisin eller tilskudd, endret tarm-/mageopptak, preparatbytte, vekt-, alders- eller
+      hormonendring, eller et forstyrret prøvesvar). «Plutselig» betyr som regel at en gradvis
+      endring passerte en terskel, eller at en ny faktor kom til – ikke at kroppen reagerer
+      annerledes uten grunn.
+    </p>
+  </div>
+
+  <div class="caution reveal">
+    Dette er en oppsummering av publisert forskning, ment som <strong>underlag for samtale med
+    lege eller endokrinolog</strong> – ikke medisinske råd. Mye av kunnskapen bygger på
+    observasjonsstudier av lav til moderat kvalitet. Dosering skal aldri endres på egen hånd.
+  </div>
+
+  <section>
+    <h2><span class="num">1</span> Behandlingen er livslang – men ikke statisk</h2>
+    <p>
+      Startdosen settes etter vekt (~1,6 µg/kg/døgn), men en metaanalyse fra 2025 fant at bare
+      omtrent <strong>én av tre</strong> traff behandlingsmålet ved første kontroll.<sup><a href="#r1">1</a></sup>
+      At dosen må justeres den første tiden er altså normalt, ikke et faresignal.
+    </p>
+    <p>
+      Når riktig dose først er funnet, blir de fleste stabile – men behovet endrer seg over år.
+      Det <strong>synker typisk med alderen</strong> fordi kroppen bruker lengre tid på å bryte
+      ned hormonet; eldre klarer seg ofte på merkbart lavere dose per kilo enn den klassiske
+      startdosen.<sup><a href="#r2">2</a></sup> Vekt, østrogen, graviditet og andre legemidler
+      flytter også behovet.
+    </p>
+    <h3>Uten kjertel: et spesialtilfelle</h3>
+    <p>
+      Uten skjoldbruskkjertel finnes ingen egen produksjon som kan jevne ut svingninger. Studier
+      viser at slike pasienter ofte har lavere fritt T3 <em>tross normal TSH</em> – i én stor
+      studie hadde rundt 15 % fritt T3 under referanseområdet.<sup><a href="#r3">3</a></sup> Det
+      er én forklaring på at noen har plager selv når «prøvene er fine». Kombinasjonsbehandling
+      (T4 + T3) er fortsatt omdiskutert: standard er T4 alene, men retningslinjene åpner for
+      forsøk i utvalgte tilfeller.<sup><a href="#r5">5</a></sup><sup><a href="#r6">6</a></sup>
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span> Ytre faktorer som endrer effekten</h2>
+    <h3>Opptak og timing</h3>
+    <ul>
+      <li>Ta tabletten <strong>fastende, 30–60 min før mat</strong>. Konsistens i rutinen betyr mer enn nøyaktig klokkeslett.<sup><a href="#r8">8</a></sup></li>
+      <li><strong>Kaffe</strong> rett sammen med tabletten reduserer opptaket (~30 %) – vent 30–60 minutter.<sup><a href="#r10">10</a></sup></li>
+      <li><strong>Kalsium og jern</strong> binder tabletten – skill med minst 4 timer.<sup><a href="#r8">8</a></sup></li>
+      <li><strong>Syrehemmere (PPI)</strong> reduserer opptaket vedvarende; her hjelper ikke tidsavstand – TSH må følges.<sup><a href="#r11">11</a></sup></li>
+      <li><strong>Malabsorpsjon</strong> (cøliaki, atrofisk gastritt, <em>H. pylori</em>) øker dosebehovet med 20–35 %.<sup><a href="#r12">12</a></sup> Dårlig kontrollert cøliaki er en kjent årsak til ustabilt behov.</li>
+    </ul>
+    <h3>Falske prøvesvar</h3>
+    <p>
+      <strong>Biotin</strong> – vanlig i hår-, hud- og negletilskudd i høye doser – forstyrrer
+      selve laboratorieanalysen og gir <strong>falsk lav TSH og falsk høy fritt T4/T3</strong>.
+      Det kan se ut som overbehandling uten at noe reelt er endret. Stopp biotin
+      <strong>48–72 timer før blodprøve</strong>.<sup><a href="#r14">14</a></sup><sup><a href="#r15">15</a></sup>
+    </p>
+    <h3>Legemidler som endrer selve behovet</h3>
+    <p>
+      Peroralt østrogen (p-piller / hormonbehandling) øker behovet; transdermalt påvirker
+      mindre.<sup><a href="#r16">16</a></sup> Enkelte andre legemidler (f.eks. rifampicin og visse
+      epilepsimedisiner) øker nedbrytningen og dermed behovet.<sup><a href="#r17">17</a></sup>
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span> Stabil i årevis – så «plutselig» endring</h2>
+    <p>
+      Fenomenet er beskrevet, men rammes nesten alltid inn som enten <em>økt behov</em> eller
+      <em>snikende overbehandling</em> – med en utløser. Dette er sjekklisten klinikere går
+      gjennom, i praktisk rekkefølge:<sup><a href="#r18">18</a></sup><sup><a href="#r19">19</a></sup>
+    </p>
+    <ol class="steg">
+      <li>Etterlevelse – glemte doser, eller tatt sammen med mat/kaffe.</li>
+      <li>Nye interfererende medisiner/tilskudd (syrehemmere, kalsium, jern, østrogen, biotin).</li>
+      <li>Preparat- eller generikabytte på apotek – de fleste merker det ikke, men noen gjør.<sup><a href="#r20">20</a></sup></li>
+      <li>Ny mage-/tarmtilstand som endrer opptaket.</li>
+      <li>Vekt-, alders- eller hormonendring.</li>
+      <li>Forstyrret prøvesvar (biotin) – utelukkes før dosen endres.</li>
+    </ol>
+    <h3>Når overbehandling bygger seg opp</h3>
+    <p>
+      Vedvarende for høy dose over år (lav TSH, høy fritt T4) øker risikoen for
+      <strong>atrieflimmer</strong> og <strong>redusert beintetthet / brudd</strong>.<sup><a href="#r21">21</a></sup><sup><a href="#r22">22</a></sup>
+      Poenget for langtidspasienter: en dose som passet ved 55 år kan bli <em>relativt</em> for
+      høy ved 70 fordi behovet synker med alderen. Pasienten glir umerkelig inn i overbehandling,
+      og bivirkningene kan merkes «plutselig» selv om dose og preparat er uendret.
+    </p>
+  </section>
+
+  <section>
+    <h2 style="border:0;padding:0;display:block">Hva dette betyr for sporingen</h2>
+    <div class="app-kort">
+      <h3>Faktorer verdt å logge</h3>
+      <p>
+        Forskningen peker på konkrete ytre faktorer som er verdt å følge sammen med dose,
+        symptomer og prøvesvar – slik at en eventuell endring kan knyttes til noe:
+      </p>
+      <ul>
+        <li>Timing av tablett mot kaffe, kalsium og jern.</li>
+        <li>Nye legemidler og kosttilskudd – særlig <strong>biotin</strong> (både som interaksjon og som påminnelse om å pause før blodprøve).</li>
+        <li>Preparat- eller generikabytte, markert som en hendelse på tidslinjen.</li>
+        <li>Vektendring (kan hentes automatisk fra klokka).</li>
+        <li>Cøliaki og glutenbrudd – på sikt koblet mot kostholdsdataene.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="kilder">
+    <h2>Kilder</h2>
+    <ol class="ref">
+      <li id="r1">Systematisk oversikt: levotyroksindose etter total tyreoidektomi. <em>JCEM</em>, 2025. <a href="https://academic.oup.com/jcem/article/110/11/3301/8207149">academic.oup.com</a></li>
+      <li id="r2">Levotyroksindosering hos eldre (Baltimore Longitudinal Study of Aging). <em>Endocrine Practice</em>, 2023. <a href="https://pubmed.ncbi.nlm.nih.gov/37391043/">pubmed.ncbi.nlm.nih.gov</a></li>
+      <li id="r3">Gullo D, et al. Levothyroxine monotherapy cannot guarantee euthyroidism in all athyreotic patients. <em>PLOS ONE</em>, 2011. <a href="https://pubmed.ncbi.nlm.nih.gov/21829633/">pubmed.ncbi.nlm.nih.gov</a></li>
+      <li id="r4">Andel innenfor referanseområdet hos athyreote på monoterapi. <em>Thyroid Research</em>, 2022. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9087916/">ncbi.nlm.nih.gov</a></li>
+      <li id="r5">Jonklaas J, Bianco AC, et al. Konsensus om L-T4/L-T3-kombinasjon (ATA/BTA/ETA), 2021. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7983670/">pmc.ncbi.nlm.nih.gov</a></li>
+      <li id="r6">Wiersinga WM, et al. 2012 ETA-retningslinjer for L-T4 + L-T3. <em>Eur Thyroid J</em>, 2012. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3821467/">ncbi.nlm.nih.gov</a></li>
+      <li id="r7">Norsk legemiddelhåndbok – hypotyreose / levotyroksin. <a href="https://www.legemiddelhandboka.no/extended/endokrine-sykdommer/tyreoideasykdommer/hypotyreose">legemiddelhandboka.no</a></li>
+      <li id="r8">Wiesner A, et al. Levothyroxine interactions with food and dietary supplements – systematic review, 2021. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8002057/">ncbi.nlm.nih.gov</a></li>
+      <li id="r10">Benvenga S, et al. Altered intestinal absorption of L-thyroxine caused by coffee. <em>Thyroid</em>, 2008. <a href="https://pubmed.ncbi.nlm.nih.gov/18341376/">pubmed.ncbi.nlm.nih.gov</a></li>
+      <li id="r11">PPI og levotyroksin-opptak. <em>Eur J Intern Med</em>, 2020. <a href="https://www.ejinme.com/article/S0953-6205(20)30064-9/abstract">ejinme.com</a></li>
+      <li id="r12">Virili C, et al. Gastrointestinal malabsorption of thyroxine. <em>Endocrine Reviews</em>, 2019. <a href="https://academic.oup.com/edrv/article/40/1/118/5198605">academic.oup.com</a></li>
+      <li id="r14">AACC/ADLM Guidance Document on Biotin Interference in Laboratory Tests. <a href="https://myadlm.org/science-and-research/academy-guidance/biotin-interference-in-laboratory-tests">myadlm.org</a></li>
+      <li id="r15">Favresse J, et al. Interferences with thyroid function immunoassays. <em>Endocrine Reviews</em>, 2018. <a href="https://academic.oup.com/edrv/article/39/5/830/5048350">academic.oup.com</a></li>
+      <li id="r16">Arafah BM. Increased need for thyroxine during estrogen therapy. <em>NEJM</em>, 2001. <a href="https://www.nejm.org/doi/full/10.1056/NEJM200106073442302">nejm.org</a></li>
+      <li id="r17">LEVO-T (levothyroxine) FDA-preparatomtale. <a href="https://www.accessdata.fda.gov/drugsatfda_docs/label/2017/021342s023lbl.pdf">accessdata.fda.gov</a></li>
+      <li id="r18">Centanni M, et al. Behandlingsrefraktær hypotyreose – ekspertkonsensus. <em>J Endocrinol Invest</em>, 2017. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5680379/">pmc.ncbi.nlm.nih.gov</a></li>
+      <li id="r19">«Why is TSH going up on levothyroxine?» <em>Medscape</em>, 2025. <a href="https://www.medscape.com/viewarticle/why-thyroid-stimulating-hormone-level-going-levothyroxine-2025a1000a7c">medscape.com</a></li>
+      <li id="r20">Brito JP, et al. Generic-to-generic switching og TSH. <em>JAMA Intern Med</em>, 2022. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8886450/">pmc.ncbi.nlm.nih.gov</a></li>
+      <li id="r21">Levotyroksin hos eldre – atrieflimmer-risiko. <em>Front Endocrinol</em>, 2021. <a href="https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2021.641560/full">frontiersin.org</a></li>
+      <li id="r22">Levothyroxine and bone (70 Years of Levothyroxine). <em>NCBI Bookshelf</em>, NBK585648. <a href="https://www.ncbi.nlm.nih.gov/books/NBK585648/">ncbi.nlm.nih.gov</a></li>
+    </ol>
+  </div>
+
+  <footer>
+    Oppsummert fra et strukturert litteratursøk mot fagfellevurderte kilder og retningslinjer
+    (ATA, ETA, Norsk legemiddelhåndbok). Verifiser alltid med behandlende lege før noe endres.
+  </footer>
+</div>
