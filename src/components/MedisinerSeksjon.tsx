@@ -11,7 +11,7 @@ import { Button, Card, Modal, feltKlasse } from './ui'
 const ENHETER = ['µg', 'mg', 'ml', 'tablett', 'dråper', 'IE']
 
 function tomForm(): MedisinInn {
-  return { navn: '', formaal: '', enhet: 'µg', standard_dose: null, aktiv: true }
+  return { navn: '', formaal: '', enhet: 'µg', standard_dose: null, aktiv: true, doser_per_dag: 1 }
 }
 
 export function MedisinerSeksjon() {
@@ -143,6 +143,22 @@ export function MedisinerSeksjon() {
                 />
               </label>
             </div>
+            <label className="block">
+              <span className="mb-1 block text-sm font-medium text-slate-700">Doser per dag</span>
+              <input
+                type="number"
+                min={1}
+                max={12}
+                className={feltKlasse}
+                value={redigerer.doser_per_dag ?? 1}
+                onChange={(e) =>
+                  setRedigerer({ ...redigerer, doser_per_dag: Math.max(1, Number(e.target.value) || 1) })
+                }
+              />
+              <span className="mt-1 block text-xs text-slate-400">
+                Antall felter som vises på «I dag». F.eks. 2 for T3/Thybon morgen + kveld.
+              </span>
+            </label>
             <label className="flex items-center gap-2 text-sm text-slate-700">
               <input
                 type="checkbox"
@@ -174,6 +190,7 @@ function tilForm(m: Medisin): MedisinInn {
     enhet: m.enhet,
     standard_dose: m.standard_dose,
     aktiv: m.aktiv,
+    doser_per_dag: m.doser_per_dag,
     sortering: m.sortering,
   }
 }

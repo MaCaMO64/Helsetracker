@@ -66,6 +66,7 @@ export interface MedisinInn {
   standard_dose?: number | null
   farge?: string | null
   aktiv?: boolean
+  doser_per_dag?: number
   sortering?: number
 }
 
@@ -95,6 +96,7 @@ export function useLagreMedisin() {
         standard_dose: m.standard_dose ?? null,
         farge: m.farge ?? null,
         aktiv: m.aktiv ?? true,
+        doser_per_dag: m.doser_per_dag ?? 1,
         sortering: m.sortering ?? 0,
       }
       const q = m.id

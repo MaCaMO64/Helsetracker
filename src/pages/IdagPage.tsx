@@ -68,12 +68,7 @@ export function IdagPage() {
               <h2 className="mb-1 text-sm font-semibold text-slate-800">💊 Doser</h2>
               <div className="divide-y divide-slate-100">
                 {aktiveMed.map((m) => (
-                  <DoseLogger
-                    key={m.id}
-                    medisin={m}
-                    dose={doser.find((d) => d.medication_id === m.id)}
-                    dato={dato}
-                  />
+                  <DoseLogger key={m.id} medisin={m} doser={doser} dato={dato} />
                 ))}
               </div>
             </Card>

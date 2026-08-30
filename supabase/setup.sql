@@ -17,9 +17,12 @@ create table if not exists medications (
   standard_dose numeric,
   farge text,
   aktiv boolean not null default true,
+  doser_per_dag int not null default 1,
   sortering int not null default 0,
   opprettet timestamptz not null default now()
 );
+-- For databaser som fikk medications før doser_per_dag fantes:
+alter table medications add column if not exists doser_per_dag int not null default 1;
 create index if not exists medications_user_idx on medications(user_id);
 
 -- ── Medisindoser ───────────────────────────────────────────────────

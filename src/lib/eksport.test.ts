@@ -11,6 +11,7 @@ function med(over: Partial<Medisin>): Medisin {
     standard_dose: 50,
     farge: null,
     aktiv: true,
+    doser_per_dag: 1,
     sortering: 0,
     opprettet: '',
     ...over,

@@ -92,7 +92,10 @@ export function HistorikkPage() {
             <div className="space-y-1.5 text-sm">
               {innhold.doser.map((dose) => (
                 <div key={dose.id} className="flex justify-between gap-3 text-slate-600">
-                  <span>💊 {medNavn.get(dose.medication_id)?.navn ?? 'Ukjent'}</span>
+                  <span>
+                    💊 {medNavn.get(dose.medication_id)?.navn ?? 'Ukjent'}
+                    {dose.tidspunkt ? <span className="text-slate-400"> · {dose.tidspunkt}</span> : ''}
+                  </span>
                   <span className="font-medium text-slate-800">
                     {dose.dose} {medNavn.get(dose.medication_id)?.enhet ?? ''}
                   </span>
