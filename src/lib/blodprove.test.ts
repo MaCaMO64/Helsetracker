@@ -49,6 +49,31 @@ Prøvetakingsdato: 12.03.2026`
   })
 })
 
+describe('parseLabTekst – realistiske varianter', () => {
+  it('håndterer prefiks, punktum-desimal og manglende enhet/ref', () => {
+    const r = parseLabTekst('P-TSH 2.30 mIE/L 0.27 - 4.20\nKolesterol 5,2')
+    expect(r.find((x) => x.analyse_kanon === 'tsh')).toMatchObject({ verdi: 2.3, enhet: 'mIE/L' })
+    expect(r.find((x) => x.analyse === 'Kolesterol')).toMatchObject({ verdi: 5.2, enhet: null })
+  })
+
+  it('ignorerer statusflagg (*) og «< N»-referanse', () => {
+    const r = parseLabTekst('S-TSH 0,04 * mIE/L 0,27-4,20\nAnti-TPO 8 kIE/L < 34')
+    expect(r.find((x) => x.analyse_kanon === 'tsh')).toMatchObject({ verdi: 0.04, enhet: 'mIE/L' })
+    expect(r.find((x) => x.analyse_kanon === 'anti_tpo')).toMatchObject({ verdi: 8, ref_hoy: 34 })
+  })
+
+  it('håndterer Helsenorge-stil «Analyse: verdi enhet (Referanse: a-b)»', () => {
+    const r = parseLabTekst('TSH: 2,3 mIE/L (Referanse: 0,27-4,20)')
+    expect(r[0]).toMatchObject({ verdi: 2.3, enhet: 'mIE/L', ref_lav: 0.27, ref_hoy: 4.2 })
+  })
+
+  it('tolker enhet med µ/prosent riktig', () => {
+    const r = parseLabTekst('Ferritin 45 µg/L 30 - 400\nJern 18 %')
+    expect(r.find((x) => x.analyse === 'Ferritin')).toMatchObject({ verdi: 45, enhet: 'µg/L' })
+    expect(r.find((x) => x.analyse === 'Jern')).toMatchObject({ verdi: 18, enhet: '%' })
+  })
+})
+
 describe('finnProvedato', () => {
   it('finner dato på norsk format', () => {
     expect(finnProvedato('Prøvetakingsdato: 12.03.2026')).toBe('2026-03-12')

@@ -5,7 +5,7 @@ import { Button, Card } from './ui'
 /** Innloggingsskjerm: magic link til e-post (ingen passord). Vises når ingen
  *  bruker er innlogget – hele appen krever innlogging (online-først, privat). */
 export function LoggInn() {
-  const { loggInn, konfigurert } = useAuth()
+  const { loggInn, konfigurert, avvist } = useAuth()
   const [epost, setEpost] = useState('')
   const [sender, setSender] = useState(false)
   const [sendt, setSendt] = useState(false)
@@ -34,6 +34,12 @@ export function LoggInn() {
             Følg medisindoser, symptomer og helsedata – logg inn for å komme i gang.
           </p>
         </div>
+
+        {avvist && (
+          <p className="mb-3 rounded-xl bg-red-50 p-3 text-sm text-red-700">
+            Denne e-posten har ikke tilgang til appen.
+          </p>
+        )}
 
         {!konfigurert ? (
           <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">

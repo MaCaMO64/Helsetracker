@@ -51,6 +51,28 @@ describe('parseGarminEksport', () => {
     expect(rader).toEqual([{ dato: '2026-02-10', skritt: 999 }])
   })
 
+  it('kjenner alternative feltnavn, calendarDateLocal, sekund-varianter og vekt i gram', () => {
+    const fil = JSON.stringify([
+      {
+        calendarDateLocal: '2026-04-01',
+        restingHeartRateInBeatsPerMinute: 52,
+        averageHeartRate: 68,
+        deepSleepDurationInSeconds: 6000, // 100 min
+        maxBodyBattery: 90,
+        weight: 74200, // gram → 74,2 kg
+      },
+    ])
+    const rader = parseGarminEksport([{ navn: 'x.json', tekst: fil }])
+    expect(rader[0]).toMatchObject({
+      dato: '2026-04-01',
+      hvilepuls: 52,
+      puls_snitt: 68,
+      dyp_sovn_min: 100,
+      body_battery_hoy: 90,
+      vekt_kg: 74.2,
+    })
+  })
+
   it('ignorerer datoer uten målinger', () => {
     const bare = JSON.stringify([{ calendarDate: '2026-03-01', irrelevantFelt: 'x' }])
     expect(parseGarminEksport([{ navn: 'c.json', tekst: bare }])).toEqual([])

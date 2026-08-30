@@ -56,6 +56,25 @@ Live: https://helsetracker.vercel.app · Repo: github.com/MaCaMO64/Helsetracker
 - [ ] AI-import av blodprøve-bilder: deploy `parse-blodprove` + AI-nøkkel i Innstillinger
 - [ ] iOS: skarpt PNG-hjemskjermikon (SVG brukes nå)
 
+## Forbedringer (fra åpen gjennomgang)
+
+Robusthet / arkitektur:
+- [ ] **#1 Ekte offline** – persistér data (IndexedDB / React Query-persister), ikke bare skrive-kø
+- [ ] **#2 Optimistisk UI** (`onMutate`) for dose/symptom; skriv om fler-dose-DoseLogger med stabile utkast-rader
+- [~] **#3 Verifiser risikable grenser** – flere parser-fixtures (blodprøve/Garmin),
+      `scripts/db-smoke.mjs`, E2E-sjekkliste (`TESTING.md`); gjenstår: kjør mot ekte Fürst-PDF + Garmin-zip
+- [ ] **#4 Kodesplitting** – lazy-load `pdfjs-dist` (Prøver), `fflate` (Garmin), graf/analyse
+- [ ] **#5 Garmin-cron-fallgruve** – GH Actions deaktiverer planlagte workflows etter 60 dager uten
+      repo-aktivitet; vurder mer robust scheduler / dokumentér tydelig
+- [x] **#6 Lås registrering** – app-allowlist (`VITE_TILLATT_EPOST`) + skru av offentlig signup i Supabase
+
+Nye funksjoner:
+- [ ] **Påminnelser om å logge** (PWA-varsler) – viktigst for etterlevelse
+- [ ] **Dose-plan med planlagte klokkeslett** (ikke bare antall) → meningsfulle påminnelser + «tatt / ikke tatt»
+- [ ] **Full dataeksport + slett konto** (GDPR-portabilitet/sletting)
+- [ ] **Delbar skrivebeskyttet legelenke** (øyeblikksbilde) i stedet for e-postvedlegg
+- [ ] **Hjem-skjerm-sammendrag/trender** (hvilepuls 7 d, TSH-trend, siste doseendring)
+
 ## Senere / idébank
 - [ ] «Creon / fordøyelsesenzymer» som loggbar hurtigfaktor
 - [ ] Regimeendring (T3/Thybon) som eget hendelsestips + FT3/FT4-oppfølging
