@@ -48,6 +48,13 @@ Kopier `.env.example` → `.env.local` og fyll inn `VITE_SUPABASE_URL` og
 `VITE_SUPABASE_ANON_KEY` (velg **EU-region** i Supabase – helsedata er
 særkategori under GDPR).
 
+## Database
+
+Kjør hele **`supabase/setup.sql`** i Supabase → SQL Editor. Fila er idempotent
+(trygg å kjøre flere ganger, og på en delvis oppsatt database) og samler alle
+migrasjonene i `supabase/migrations/`. Ved endringer senere: legg til en ny
+nummerert migrasjon *og* speil endringen i `setup.sql`.
+
 ## Publisering
 
 Repoet kobles til **Vercel**: hver push til `main` bygger og publiserer.

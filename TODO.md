@@ -65,7 +65,7 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
 - [x] Biotin-varsel på Prøver-siden (statisk tips + sterkt varsel hvis biotin logget nylig)
 - [x] Bulk-import av Garmin-historikk fra manuell dataeksport (zip → lokal parsing
       `garminEksport.ts` + `garminZip.ts` → garmin_daily via RLS; forhåndsvisning) + tester
-- [ ] DU: kjør migrasjon 0003 i SQL Editor
+- [ ] DU: kjør `supabase/setup.sql` i SQL Editor (samler alle migrasjonene, idempotent)
 
 ## M9 – Hendelser ✅
 - [x] Legg til/rediger/slett hendelser (doseendring/legebesøk/notat) i Historikk
