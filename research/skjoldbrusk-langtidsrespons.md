@@ -53,6 +53,22 @@
   eller ustabilt levotyroksin-behov, så glutenfri etterlevelse er verdt å se i
   sammenheng med prøvesvar.
 
+### Pankreasenzymer (Creon)
+- **Ingen kjent direkte interaksjon** mellom pankreasenzymer (Creon /
+  pancrelipase) og levotyroksin – interaksjonsdatabaser lister ingen [23], og de
+  to tas naturlig fra hverandre (levotyroksin fastende om morgenen, Creon til
+  måltider), så tidsatskillelsen skjer av seg selv.
+- **Den relevante koblingen er indirekte:** ubehandlet eksokrin pankreassvikt gir
+  fettmalabsorpsjon som kan *øke* levotyroksinbehovet – samme kategori som
+  cøliaki og atrofisk gastritt [12]. Riktig Creon-behandling forventes da snarere
+  å **normalisere** opptaket enn å forstyrre det. NB: evidensen her er indirekte
+  (eldre, små studier + analogi), ikke dedikerte studier på nettopp Creon +
+  levotyroksin.
+- **Praktisk:** hvis Creon-dosen endres vesentlig, eller EPI-behandling starter/
+  stopper, er det fornuftig å kontrollere TSH/fritt T4 etter noen uker – ikke
+  fordi medisinene «krangler», men fordi endret tarmabsorpsjon flytter på hvor mye
+  levotyroksin som faktisk tas opp.
+
 ### Analyseinterferens – «falske» prøvesvar
 - **Biotin** (vitamin B7, i mange hår/hud/negl-tilskudd i høye doser) forstyrrer
   vanlige laboratorieanalyser og gir **falsk lav TSH og falsk høy FT4/FT3** – et
@@ -131,6 +147,7 @@ utvidelse, og et **biotin-før-prøve-varsel** er en liten, konkret forbedring.
 20. Brito JP, et al. «Generic-to-Generic Levothyroxine Switching and Thyrotropin Levels.» *JAMA Intern Med*, 2022. https://pmc.ncbi.nlm.nih.gov/articles/PMC8886450/
 21. «Levothyroxine Therapy in Elderly Patients With Hypothyroidism» (atrieflimmer-risiko). *Front Endocrinol*, 2021. https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2021.641560/full
 22. «Levothyroxine and Bone» (70 Years of Levothyroxine). *NCBI Bookshelf* NBK585648. https://www.ncbi.nlm.nih.gov/books/NBK585648/
+23. Drugs.com – interaksjonssjekk «Creon + levothyroxine» (ingen interaksjon oppført). https://www.drugs.com/drug-interactions/creon-with-levothyroxine-1787-14033-1463-0.html
 
 ---
 _Oppsummert fra litteratursøk. Verifiser med behandlende lege før noe endres._
