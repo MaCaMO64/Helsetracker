@@ -36,10 +36,11 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
 - [x] Vis «siste vellykkede synk» i appen (GarminSeksjon, dødmannsknapp)
 - [ ] DU: kjør `bootstrap.py`, legg inn 4 GitHub-secrets, kjør backfill (se GARMIN.md)
 
-## M5 – Analyse
-- [ ] Tidsseriegrafer med doseendring-markører (SVG)
-- [ ] Før/etter-sammenligning ved doseendring (effektstørrelse, rullende snitt)
-- [ ] Korrelasjon med valgbar lag (uker) + spredningsplott, med tydelige forbehold
+## M5 – Analyse ✅
+- [x] Tidsseriegrafer med doseendring-markører (SVG, to akser) – `Graf.tsx`
+- [x] Før/etter-sammenligning ved doseendring (snitt + diff; effektstørrelse i `analyse.ts`)
+- [x] Korrelasjon med valgbar lag + spredningsplott, med tydelige forbehold
+- [x] Etterprøvbar statistikk i `analyse.ts` (+ tester: pearson, lag, før/etter)
 
 ## M6 – Eksport + polish
 - [ ] CSV-eksport
