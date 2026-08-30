@@ -11,3 +11,11 @@ export const supabase: SupabaseClient | null = erSupabaseKonfigurert
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
     })
   : null
+
+/** Authorization-token for Edge Function-kall: brukerens sesjon hvis innlogget,
+ *  ellers anon-nøkkelen. */
+export async function hentAuthToken(): Promise<string | null> {
+  if (!supabase) return null
+  const { data } = await supabase.auth.getSession()
+  return data.session?.access_token ?? anon ?? null
+}

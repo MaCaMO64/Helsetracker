@@ -42,10 +42,12 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
 - [x] Korrelasjon med valgbar lag + spredningsplott, med tydelige forbehold
 - [x] Etterprøvbar statistikk i `analyse.ts` (+ tester: pearson, lag, før/etter)
 
-## M6 – Eksport + polish
-- [ ] CSV-eksport
-- [ ] Utskrifts-/PDF-rapport for legetime
-- [ ] PWA-polish, ikoner, tomtilstander
+## M6 – Eksport ✅
+- [x] CSV-eksport (`eksport.ts` + tester)
+- [x] Utskrifts-/PDF-rapport for legetime (plainspråk, forbehold)
+- [x] Send CSV/rapport på e-post (Edge Function `send-rapport` via Resend)
+- [ ] DU: sett opp Resend + secrets + VITE_FUNCTIONS_URL (se EPOST.md) for e-post
+- [ ] PWA-polish, ikoner, flere tomtilstander (løpende)
 
 ## Senere / idébank
 - [ ] Kobling mot Matplanlegger (daglig ernæringsoppsummering join på dato)

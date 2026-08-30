@@ -23,6 +23,7 @@ import type { GarminDag } from '../lib/types'
 import { SideTittel, Card, Button, TomTilstand, feltKlasse } from '../components/ui'
 import { Graf, type GrafMarkor } from '../components/Graf'
 import { Spredning } from '../components/Spredning'
+import { EksportSeksjon } from '../components/EksportSeksjon'
 
 const FARGE_A = '#0d9488' // teal (venstre akse)
 const FARGE_B = '#6366f1' // indigo (høyre akse)
@@ -383,6 +384,16 @@ export function AnalysePage() {
           </p>
         </Card>
       )}
+
+      <EksportSeksjon
+        fra={fra}
+        til={til}
+        medisiner={medisiner}
+        symptomer={symptomer}
+        doser={doser}
+        oppforinger={oppforinger}
+        garmin={garminDager}
+      />
     </div>
   )
 }
