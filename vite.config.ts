@@ -14,6 +14,12 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.ts',
       includeAssets: ['favicon.svg'],
+      // Hold pdf.js (lib + worker, ~1,7 MB til sammen) UTE av precachen – det
+      // hentes ved behov når man åpner Prøver. App-skallet precaches som før.
+      injectManifest: {
+        globIgnores: ['**/pdf*.js', '**/pdf*.mjs'],
+        maximumFileSizeToCacheInBytes: 1024 * 1024,
+      },
       manifest: {
         name: 'Helsetracker',
         short_name: 'Helse',

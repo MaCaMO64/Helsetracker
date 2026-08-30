@@ -60,10 +60,11 @@ Live: https://helsetracker.vercel.app · Repo: github.com/MaCaMO64/Helsetracker
 
 Robusthet / arkitektur:
 - [ ] **#1 Ekte offline** – persistér data (IndexedDB / React Query-persister), ikke bare skrive-kø
-- [ ] **#2 Optimistisk UI** (`onMutate`) for dose/symptom; skriv om fler-dose-DoseLogger med stabile utkast-rader
+- [x] **#2 Optimistisk UI** (`onMutate`) for dose/symptom + robust fler-dose-DoseLogger (stabile utkast-rader)
 - [~] **#3 Verifiser risikable grenser** – flere parser-fixtures (blodprøve/Garmin),
       `scripts/db-smoke.mjs`, E2E-sjekkliste (`TESTING.md`); gjenstår: kjør mot ekte Fürst-PDF + Garmin-zip
-- [ ] **#4 Kodesplitting** – lazy-load `pdfjs-dist` (Prøver), `fflate` (Garmin), graf/analyse
+- [x] **#4 Kodesplitting** – dynamisk import av pdf.js + fflate, lazy Prøver/Analyse;
+      pdf.js ute av precache (precache ~995→576 KiB)
 - [ ] **#5 Garmin-cron-fallgruve** – GH Actions deaktiverer planlagte workflows etter 60 dager uten
       repo-aktivitet; vurder mer robust scheduler / dokumentér tydelig
 - [x] **#6 Lås registrering** – app-allowlist (`VITE_TILLATT_EPOST`) + skru av offentlig signup i Supabase

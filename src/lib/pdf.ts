@@ -1,10 +1,7 @@
 // Lokal PDF-tekstuttrekk (pdf.js) – kjører i nettleseren, ingen data ut.
-// Rekonstruerer linjer ut fra tekstens y-posisjon så tabell-strukturen bevares
-// for blodprøve-parseren.
-import * as pdfjs from 'pdfjs-dist'
-import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
-
-pdfjs.GlobalWorkerOptions.workerSrc = workerUrl
+// pdf.js dynamisk-importeres først når en PDF faktisk leses (holdes ute av
+// hovedbunten/precachen). Rekonstruerer linjer ut fra tekstens y-posisjon så
+// tabell-strukturen bevares for blodprøve-parseren.
 
 interface TekstItem {
   str: string
@@ -12,6 +9,10 @@ interface TekstItem {
 }
 
 export async function lesPdfTekst(file: File): Promise<string> {
+  const pdfjs = await import('pdfjs-dist')
+  const workerMod = (await import('pdfjs-dist/build/pdf.worker.min.mjs?url')) as { default: string }
+  pdfjs.GlobalWorkerOptions.workerSrc = workerMod.default
+
   const data = await file.arrayBuffer()
   const pdf = await pdfjs.getDocument({ data }).promise
   let ut = ''

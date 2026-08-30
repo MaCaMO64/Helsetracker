@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { useOfflineFlush } from '../lib/db'
@@ -66,7 +67,9 @@ export function Layout() {
 
       {/* Innhold */}
       <main className="mx-auto max-w-3xl px-4 pb-28 pt-4 md:pb-10">
-        <Outlet />
+        <Suspense fallback={<div className="py-16 text-center text-slate-400">Laster …</div>}>
+          <Outlet />
+        </Suspense>
       </main>
 
       {/* Kom i gang-guide (første besøk, og på forespørsel fra Innstillinger) */}

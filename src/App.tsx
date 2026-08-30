@@ -1,10 +1,15 @@
+import { lazy } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { IdagPage } from './pages/IdagPage'
 import { HistorikkPage } from './pages/HistorikkPage'
-import { ProverPage } from './pages/ProverPage'
-import { AnalysePage } from './pages/AnalysePage'
 import { InnstillingerPage } from './pages/InnstillingerPage'
+
+// Tunge sider lastes ved behov (Prøver drar inn pdf.js, Analyse drar inn grafene).
+const ProverPage = lazy(() => import('./pages/ProverPage').then((m) => ({ default: m.ProverPage })))
+const AnalysePage = lazy(() =>
+  import('./pages/AnalysePage').then((m) => ({ default: m.AnalysePage })),
+)
 
 export default function App() {
   return (
