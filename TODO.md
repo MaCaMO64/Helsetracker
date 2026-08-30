@@ -1,77 +1,64 @@
 # TODO / Veikart – Helsetracker
 
 Milepæler. Hakk av og oppdater ved fullført arbeid.
+Live: https://helsetracker.vercel.app · Repo: github.com/MaCaMO64/Helsetracker
 
-## M0 – Scaffold + innlogging ✅
-- [x] Vite + React 19 + TS + Tailwind v4 + PWA
-- [x] Supabase magic link-auth med innloggingsgate
-- [x] App-shell: nav (I dag / Historikk / Analyse / Innstillinger)
-- [x] React Query-provider (online-først)
-- [ ] Opprett Supabase-prosjekt (EU-region), GitHub-repo og Vercel-prosjekt
-- [ ] Fyll `.env.local`, verifiser innlogging mot ekte Supabase
+## Fullførte milepæler
 
-## M1 – Datamodell + datalag ✅
-- [x] Migrasjoner: `medications`, `medication_doses`, `symptoms`,
-      `symptom_entries`, `garmin_daily`, `garmin_sync_log`, `events` (+ RLS `user_id = auth.uid()`)
-- [x] React Query-hooks (les/skriv) per tabell (`src/lib/db.ts`)
-- [x] Offline-kø for daglig logging (`src/lib/offlineKo.ts` + tester)
-- [x] Dato-hjelpere (`src/lib/dates.ts` + tester)
-- [ ] Kjør migrasjonen mot Supabase (SQL Editor) og verifiser tabellene
+### M0 – Scaffold + innlogging ✅
+- Vite + React 19 + TS + Tailwind v4 + PWA; Supabase magic link + innloggingsgate
+- App-shell, React Query (online-først); Supabase (EU), GitHub og Vercel satt opp
 
-## M2 – Daglig logging ✅
-- [x] «I dag»: rask inntasting av doser + symptomer (store knapper, mobil), med datovelger
-- [x] Historikk: liste over siste 30 dager med doser/symptomer/hendelser
-- [ ] Historikk: redigering direkte fra lista (kommer)
+### M1 – Datamodell + datalag ✅
+- Migrasjoner + RLS (`user_id = auth.uid()`), React Query-hooks (`db.ts`)
+- Offline-kø (`offlineKo.ts`) + dato-hjelpere (`dates.ts`) med tester
 
-## M3 – Definisjoner ✅ (delvis)
-- [x] Innstillinger: definer egne medisiner (enhet, standarddose) og symptomer (skala)
-- [ ] Hendelser (events): «økte dose til X», legebesøk – UI for å legge inn (vises alt i Historikk)
+### M2 – Daglig logging ✅
+- «I dag» med datovelger; Historikk (siste 30 dager)
 
-## M4 – Garmin-synk ✅ (kode) – gjenstår din bootstrap
-- [x] Python-script (`garmin_sync/sync.py`) – dagssammendrag, defensivt
-- [x] GitHub Actions: daglig cron + `workflow_dispatch` (manuell + backfill-dager)
-- [x] Backfill via manuell kjøring (`dager`-input)
-- [x] `bootstrap.py` + `GARMIN.md`: token-bootstrap (MFA lokalt → GitHub-secret)
-- [x] Skriv til `garmin_daily` via service-role; logg til `garmin_sync_log`
-- [x] Vis «siste vellykkede synk» i appen (GarminSeksjon, dødmannsknapp)
-- [ ] DU: kjør `bootstrap.py`, legg inn 4 GitHub-secrets, kjør backfill (se GARMIN.md)
+### M3 – Definisjoner ✅
+- Innstillinger: medisiner og symptomer
 
-## M5 – Analyse ✅
-- [x] Tidsseriegrafer med doseendring-markører (SVG, to akser) – `Graf.tsx`
-- [x] Før/etter-sammenligning ved doseendring (snitt + diff; effektstørrelse i `analyse.ts`)
-- [x] Korrelasjon med valgbar lag + spredningsplott, med tydelige forbehold
-- [x] Etterprøvbar statistikk i `analyse.ts` (+ tester: pearson, lag, før/etter)
+### M4 – Garmin-synk ✅ (kode)
+- `garmin_sync/` (Python) + GitHub Actions (daglig + backfill) + `GARMIN.md`
+- Synk-status som dødmannsknapp i appen
 
-## M6 – Eksport ✅
-- [x] CSV-eksport (`eksport.ts` + tester)
-- [x] Utskrifts-/PDF-rapport for legetime (plainspråk, forbehold)
-- [x] Send CSV/rapport på e-post (Edge Function `send-rapport` via Resend)
-- [ ] DU: sett opp Resend + secrets + VITE_FUNCTIONS_URL (se EPOST.md) for e-post
-- [x] PWA-polish: offline-varsel, installer-knapp, «kom i gang»-guide (Velkomst)
-- [ ] PNG-ikoner for iOS (mangler rasteriserings-verktøy lokalt – SVG brukes nå)
+### M5 – Analyse ✅
+- SVG-grafer, doseendring-markører, før/etter, korrelasjon m/ lag – i plainspråk
+- Etterprøvbar statistikk i `analyse.ts` (+ tester)
 
-## M7 – Import av blodprøver ✅
-- [x] Migrasjon 0002 `lab_results` + RLS
-- [x] Lokal PDF-tekst-parsing (`blodprove.ts` + `pdf.ts`) + tester
-- [x] AI-fallback for bilder (Edge Function `parse-blodprove`, BYO-nøkkel + samtykke)
-- [x] «Prøver»-side: last opp → forhåndsvis/rediger → lagre; liste med referanseflagg
-- [x] Integrert i Analyse (TSH/FT4 som kurver) og i eksport (CSV + rapport)
-- [ ] DU: kjør migrasjon 0002 i SQL Editor; (valgfritt) deploy `parse-blodprove` + AI-nøkkel for bildeimport
+### M6 – Eksport ✅
+- CSV + utskrift/PDF + e-post (`send-rapport` via Resend); PWA-polish + velkomstguide
 
-## M8 – Faktorer + Garmin bulk-import ✅
-- [x] Loggbare «faktorer» (kaffe/kalsium/jern-timing, biotin, glutenbrudd …) via
-      kategori på symptoms (migrasjon 0003); egen seksjon i Innstillinger + «I dag»
-- [x] Hurtigknapp «legg til vanlige faktorer» (fra forskningen)
-- [x] Biotin-varsel på Prøver-siden (statisk tips + sterkt varsel hvis biotin logget nylig)
-- [x] Bulk-import av Garmin-historikk fra manuell dataeksport (zip → lokal parsing
-      `garminEksport.ts` + `garminZip.ts` → garmin_daily via RLS; forhåndsvisning) + tester
-- [ ] DU: kjør `supabase/setup.sql` i SQL Editor (samler alle migrasjonene, idempotent)
+### M7 – Blodprøver ✅
+- `lab_results`; lokal PDF-parsing + AI-fallback (`parse-blodprove`); Prøver-side
+- Integrert i Analyse + eksport; biotin-varsel
 
-## M9 – Hendelser ✅
-- [x] Legg til/rediger/slett hendelser (doseendring/legebesøk/notat) i Historikk
-- [x] Hendelser vist som markører i Analyse-grafen (lilla), doseendringer (grå)
+### M8 – Faktorer + Garmin bulk-import ✅
+- Loggbare faktorer (kategori på symptoms); bulk-import fra Garmin-dataeksport (zip)
+
+### M9 – Hendelser ✅
+- Legg til/rediger/slett hendelser i Historikk; markører i Analyse
+
+### M10 – Klokkeslett + flere doser per dag ✅
+- Dose med tidspunkt; `doser_per_dag` per medisin; flere doser/dag på «I dag»
+
+### Forskning ✅
+- `research/skjoldbrusk-langtidsrespons.md` + delbar nettside (Artifact):
+  langtidsrespons, eksogene faktorer, Creon, kombinasjonsbehandling (T4+T3/Thybon)
+
+## Database
+- [x] `supabase/setup.sql` kjørt (idempotent samlefil; migrasjoner 0001–0004)
+
+## Gjenstår – dine valgfrie oppsett (når du vil bruke dem)
+- [ ] Garmin auto-synk: `bootstrap.py` + 4 GitHub-secrets + backfill (`GARMIN.md`)
+- [ ] E-postsending av rapport: Resend-nøkkel + deploy `send-rapport` + `VITE_FUNCTIONS_URL` (`EPOST.md`)
+- [ ] AI-import av blodprøve-bilder: deploy `parse-blodprove` + AI-nøkkel i Innstillinger
+- [ ] iOS: skarpt PNG-hjemskjermikon (SVG brukes nå)
 
 ## Senere / idébank
+- [ ] «Creon / fordøyelsesenzymer» som loggbar hurtigfaktor
+- [ ] Regimeendring (T3/Thybon) som eget hendelsestips + FT3/FT4-oppfølging
 - [ ] Kobling mot Matplanlegger (daglig ernæringsoppsummering join på dato)
 - [ ] Intraday Garmin-data (søvnfaser, HRV om natten) hvis daglig ikke er nok
 - [ ] Påminnelser om å logge

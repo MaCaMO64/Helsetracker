@@ -11,16 +11,23 @@ bruker, innlogging med magisk lenke på e-post.
 > lege – den gir ikke diagnoser eller behandlingsråd, og korrelasjon er ikke
 > årsak.
 
-## Hva den skal gjøre
+## Hva den gjør
 
-- **Logg daglig**: medisindoser (med doseendringer over tid) og symptomer
-  (kvalme, trøtthet, hjernetåke … på skala 0–10)
-- **Garmin-data**: henter dagssammendrag (hvilepuls, søvn, HRV, stress, Body
-  Battery, skritt, vekt) automatisk via `python-garminconnect`
-- **Analyse**: tidsseriegrafer med doseendringer lagt oppå vitaler/symptomer,
-  før/etter-sammenligning ved doseendring, korrelasjon med valgbar
-  tidsforskyvning (lag) – bevisst visuelt og forsiktig, ikke p-verdi-jaging
-- **Eksport** (CSV/PDF) til legetime
+- **Daglig logging**: medisindoser med klokkeslett (flere doser per dag),
+  symptomer (0–10) og ytre **faktorer** (kaffe/kalsium/jern-timing, biotin …)
+- **Blodprøver**: import fra Fürst/Helsenorge – PDF med tekst leses lokalt,
+  skjermbilder via AI (med samtykke). TSH/FT4/FT3 m.m. blir kurver i analysen
+- **Garmin**: dagssammendrag (hvilepuls, søvn, HRV, stress, Body Battery, skritt,
+  vekt) automatisk via `python-garminconnect`, pluss bulk-import fra Garmins
+  manuelle dataeksport (zip)
+- **Hendelser**: doseendring, legebesøk, preparatbytte – som markører på tidslinjen
+- **Analyse**: alt dato-nøklet – doseendringer og hendelser lagt oppå
+  vitaler/lab/symptomer, før/etter-sammenligning, korrelasjon med valgbar
+  tidsforskyvning – i **vanlig språk**, ikke p-verdi-jaging
+- **Eksport**: CSV + utskrifts-/PDF-rapport + e-post til legetime
+
+Kunnskapsgrunnlag: se `research/` (litteraturoppsummering om langtidsrespons på
+levotyroksin, eksogene faktorer, kombinasjonsbehandling m.m.).
 
 ## Teknologi
 
@@ -32,7 +39,9 @@ offline-kø for daglig logging (så en dose tastet uten dekning ikke går tapt).
 Ingen JSON-blob-store (til forskjell fra søsterprosjektet Matplanlegger).
 
 Garmin-innhenting kjører som **Python + GitHub Actions** (daglig), skriver til
-Supabase med service-role-nøkkel. Se `GARMIN.md` (kommer i M4).
+Supabase med service-role-nøkkel (se `GARMIN.md`). Blodprøve-bilder tolkes av en
+Edge Function med egen AI-nøkkel (se `EPOST.md` for e-postsending av rapport).
+Ekstra: `pdfjs-dist` (lokal PDF-lesing), `fflate` (Garmin-zip).
 
 ## Kom i gang (utvikling)
 
@@ -68,4 +77,10 @@ bygges nå. Se `AGENTS.md`.
 
 ## Status
 
-Se `TODO.md` for veikart (M0–M6). Nå: **M0 – scaffold + innlogging** ✅
+Alle planlagte milepæler (**M0–M10**) er bygget og live på Vercel – daglig
+logging, faktorer, Garmin (synk + bulk-import), blodprøver, analyse, hendelser og
+eksport. Se `TODO.md` for detaljer.
+
+Gjenstår kun **valgfrie** integrasjonsoppsett når du vil bruke dem: Garmin-secrets
+for auto-synk (`GARMIN.md`), Resend for e-postsending (`EPOST.md`), og AI-nøkkel
+for bilde-import av blodprøver.
