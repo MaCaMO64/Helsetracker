@@ -10,11 +10,13 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
 - [ ] Opprett Supabase-prosjekt (EU-region), GitHub-repo og Vercel-prosjekt
 - [ ] Fyll `.env.local`, verifiser innlogging mot ekte Supabase
 
-## M1 – Datamodell + datalag
-- [ ] Migrasjoner: `medications`, `medication_doses`, `symptoms`,
+## M1 – Datamodell + datalag ✅
+- [x] Migrasjoner: `medications`, `medication_doses`, `symptoms`,
       `symptom_entries`, `garmin_daily`, `garmin_sync_log`, `events` (+ RLS `user_id = auth.uid()`)
-- [ ] React Query-hooks (les/skriv) per tabell
-- [ ] Offline-kø for daglig logging (skriv lokalt → send når nett er tilbake)
+- [x] React Query-hooks (les/skriv) per tabell (`src/lib/db.ts`)
+- [x] Offline-kø for daglig logging (`src/lib/offlineKo.ts` + tester)
+- [x] Dato-hjelpere (`src/lib/dates.ts` + tester)
+- [ ] Kjør migrasjonen mot Supabase (SQL Editor) og verifiser tabellene
 
 ## M2 – Daglig logging
 - [ ] «I dag»: rask inntasting av doser + symptomer (store knapper, mobil)

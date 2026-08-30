@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
+import { useOfflineFlush } from '../lib/db'
 import { APP_VERSJON } from '../lib/versjon'
 import { LoggInn } from './LoggInn'
 
@@ -12,6 +13,7 @@ const nav = [
 
 export function Layout() {
   const { laster, session } = useAuth()
+  useOfflineFlush() // sender køede offline-skrivinger ved oppstart / når nettet er tilbake
 
   // Innloggingsgate: hele appen krever innlogging (online-først, privat helsedata).
   if (laster) {
