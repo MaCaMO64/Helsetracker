@@ -6,6 +6,7 @@ import { SideTittel, Card, Button, feltKlasse } from '../components/ui'
 import { MedisinerSeksjon } from '../components/MedisinerSeksjon'
 import { SymptomerSeksjon } from '../components/SymptomerSeksjon'
 import { GarminSeksjon } from '../components/GarminSeksjon'
+import { PaaminnelseSeksjon } from '../components/PaaminnelseSeksjon'
 import { VIS_VELKOMST } from '../components/Velkomst'
 import { useInstall } from '../lib/pwa'
 
@@ -21,6 +22,7 @@ export function InnstillingerPage() {
       <SymptomerSeksjon kategori="symptom" />
       <SymptomerSeksjon kategori="faktor" />
       <GarminSeksjon />
+      <PaaminnelseSeksjon />
 
       <Card className="p-5">
         <h2 className="text-sm font-semibold text-slate-800">🔬 Bildeimport (AI)</h2>

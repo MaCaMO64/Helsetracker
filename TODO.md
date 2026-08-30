@@ -70,11 +70,13 @@ Robusthet / arkitektur:
 - [x] **#6 Lås registrering** – app-allowlist (`VITE_TILLATT_EPOST`) + skru av offentlig signup i Supabase
 
 Nye funksjoner:
-- [ ] **Påminnelser om å logge** (PWA-varsler) – viktigst for etterlevelse
+- [x] **Påminnelser om å logge** – nudge på hjem-skjerm + nettleservarsel ved åpning
+      etter valgt tid (catch-up; ekte bakgrunnsvarsler er begrenset i PWA/iOS)
+- [x] **Hjem-skjerm-sammendrag/trender** – «gjenstår å logge» + trend-fliser
+      (hvilepuls 7 d, søvn, Body Battery, vekt, siste TSH, siste doseendring)
 - [ ] **Dose-plan med planlagte klokkeslett** (ikke bare antall) → meningsfulle påminnelser + «tatt / ikke tatt»
 - [ ] **Full dataeksport + slett konto** (GDPR-portabilitet/sletting)
 - [ ] **Delbar skrivebeskyttet legelenke** (øyeblikksbilde) i stedet for e-postvedlegg
-- [ ] **Hjem-skjerm-sammendrag/trender** (hvilepuls 7 d, TSH-trend, siste doseendring)
 
 ## Senere / idébank
 - [ ] «Creon / fordøyelsesenzymer» som loggbar hurtigfaktor

@@ -6,6 +6,7 @@ import { APP_VERSJON } from '../lib/versjon'
 import { LoggInn } from './LoggInn'
 import { OfflineBanner } from './OfflineBanner'
 import { Velkomst } from './Velkomst'
+import { Paaminnelse } from './Paaminnelse'
 
 const nav = [
   { to: '/', label: 'I dag', ikon: '📝', end: true },
@@ -74,6 +75,7 @@ export function Layout() {
 
       {/* Kom i gang-guide (første besøk, og på forespørsel fra Innstillinger) */}
       <Velkomst />
+      <Paaminnelse />
 
       {/* Mobil bunnavigasjon */}
       <nav className="safe-bottom fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white md:hidden">

@@ -5,6 +5,7 @@ import { formaterDatoKort, iDag, leggTilDager } from '../lib/dates'
 import { SideTittel, Card, Button, TomTilstand } from '../components/ui'
 import { DoseLogger } from '../components/DoseLogger'
 import { SymptomLogger } from '../components/SymptomLogger'
+import { Oversikt } from '../components/Oversikt'
 
 export function IdagPage() {
   const [dato, setDato] = useState(iDag())
@@ -63,6 +64,8 @@ export function IdagPage() {
         />
       ) : (
         <>
+          {erIdag && <Oversikt />}
+
           {aktiveMed.length > 0 && (
             <Card className="p-5">
               <h2 className="mb-1 text-sm font-semibold text-slate-800">💊 Doser</h2>
