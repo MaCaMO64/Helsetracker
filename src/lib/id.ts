@@ -1,0 +1,7 @@
+/** Kort, unik id. Bruker crypto.randomUUID der tilgjengelig. */
+export function nyId(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID()
+  }
+  return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36)
+}
