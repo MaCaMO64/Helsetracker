@@ -13,6 +13,7 @@ import type {
   GarminDag,
   GarminSynkLogg,
   Hendelse,
+  LabResultat,
   Medisin,
   Symptom,
   SymptomOppforing,
@@ -401,6 +402,71 @@ export function useSisteSynk() {
       if (error) throw error
       return (data as GarminSynkLogg) ?? null
     },
+  })
+}
+
+// ── Blodprøver ─────────────────────────────────────────────────────
+export interface LabInn {
+  dato: string
+  analyse: string
+  analyse_kanon?: string | null
+  verdi: number
+  enhet?: string | null
+  ref_lav?: number | null
+  ref_hoy?: number | null
+  kilde?: string
+  notat?: string | null
+}
+
+export function useLabResultater(fra: string, til: string) {
+  return useQuery({
+    queryKey: ['lab', fra, til],
+    queryFn: async (): Promise<LabResultat[]> => {
+      const { data, error } = await klient()
+        .from('lab_results')
+        .select('*')
+        .gte('dato', fra)
+        .lte('dato', til)
+        .order('dato')
+      if (error) throw error
+      return (data ?? []) as LabResultat[]
+    },
+  })
+}
+
+export function useLagreLabResultater() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (rader: LabInn[]): Promise<void> => {
+      if (rader.length === 0) return
+      const rows = rader.map((r) => ({
+        dato: r.dato,
+        analyse: r.analyse,
+        analyse_kanon: r.analyse_kanon ?? null,
+        verdi: r.verdi,
+        enhet: r.enhet ?? null,
+        ref_lav: r.ref_lav ?? null,
+        ref_hoy: r.ref_hoy ?? null,
+        kilde: r.kilde ?? 'manuell',
+        notat: r.notat ?? null,
+      }))
+      const { error } = await klient()
+        .from('lab_results')
+        .upsert(rows, { onConflict: 'user_id,dato,analyse' })
+      if (error) throw error
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['lab'] }),
+  })
+}
+
+export function useSlettLabResultat() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string): Promise<void> => {
+      const { error } = await klient().from('lab_results').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['lab'] }),
   })
 }
 

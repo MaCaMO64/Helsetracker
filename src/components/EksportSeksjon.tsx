@@ -1,6 +1,13 @@
 import { useState, type FormEvent } from 'react'
 import { useAuth } from '../lib/auth'
-import type { Dose, GarminDag, Medisin, Symptom, SymptomOppforing } from '../lib/types'
+import type {
+  Dose,
+  GarminDag,
+  LabResultat,
+  Medisin,
+  Symptom,
+  SymptomOppforing,
+} from '../lib/types'
 import {
   byggCsv,
   byggRapportHtml,
@@ -19,6 +26,7 @@ export function EksportSeksjon(props: {
   doser: Dose[]
   oppforinger: SymptomOppforing[]
   garmin: GarminDag[]
+  labResultater: LabResultat[]
 }) {
   const { bruker } = useAuth()
   const [epost, setEpost] = useState('')
@@ -36,6 +44,7 @@ export function EksportSeksjon(props: {
       doser: props.doser,
       oppforinger: props.oppforinger,
       garmin: props.garmin,
+      labResultater: props.labResultater,
     }
   }
 

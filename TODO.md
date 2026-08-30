@@ -50,7 +50,17 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
 - [x] PWA-polish: offline-varsel, installer-knapp, «kom i gang»-guide (Velkomst)
 - [ ] PNG-ikoner for iOS (mangler rasteriserings-verktøy lokalt – SVG brukes nå)
 
+## M7 – Import av blodprøver ✅
+- [x] Migrasjon 0002 `lab_results` + RLS
+- [x] Lokal PDF-tekst-parsing (`blodprove.ts` + `pdf.ts`) + tester
+- [x] AI-fallback for bilder (Edge Function `parse-blodprove`, BYO-nøkkel + samtykke)
+- [x] «Prøver»-side: last opp → forhåndsvis/rediger → lagre; liste med referanseflagg
+- [x] Integrert i Analyse (TSH/FT4 som kurver) og i eksport (CSV + rapport)
+- [ ] DU: kjør migrasjon 0002 i SQL Editor; (valgfritt) deploy `parse-blodprove` + AI-nøkkel for bildeimport
+
 ## Senere / idébank
+- [ ] **Bulk-import av Garmin-historikk** via Garmins manuelle dataeksport (last opp
+      zip lokalt → parse DI-Connect-Wellness JSON/CSV → garmin_daily; privatvennlig backfill)
 - [ ] Kobling mot Matplanlegger (daglig ernæringsoppsummering join på dato)
 - [ ] Intraday Garmin-data (søvnfaser, HRV om natten) hvis daglig ikke er nok
 - [ ] Påminnelser om å logge

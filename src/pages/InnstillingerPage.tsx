@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { useAuth } from '../lib/auth'
 import { APP_VERSJON } from '../lib/versjon'
-import { SideTittel, Card, Button } from '../components/ui'
+import { hentAiNokkel, settAiNokkel } from '../lib/aiNokkel'
+import { SideTittel, Card, Button, feltKlasse } from '../components/ui'
 import { MedisinerSeksjon } from '../components/MedisinerSeksjon'
 import { SymptomerSeksjon } from '../components/SymptomerSeksjon'
 import { GarminSeksjon } from '../components/GarminSeksjon'
@@ -10,6 +12,7 @@ import { useInstall } from '../lib/pwa'
 export function InnstillingerPage() {
   const { bruker, loggUt } = useAuth()
   const { kanInstallere, installer, installert, erIOS } = useInstall()
+  const [aiNokkel, setAiNokkelLokal] = useState(hentAiNokkel())
   return (
     <div className="space-y-4">
       <SideTittel tittel="Innstillinger" />
@@ -17,6 +20,24 @@ export function InnstillingerPage() {
       <MedisinerSeksjon />
       <SymptomerSeksjon />
       <GarminSeksjon />
+
+      <Card className="p-5">
+        <h2 className="text-sm font-semibold text-slate-800">🔬 Bildeimport (AI)</h2>
+        <p className="mt-1 text-xs text-slate-500">
+          Kun nødvendig hvis du vil tolke blodprøve-<em>skjermbilder</em> automatisk (PDF-er med
+          tekst leses uten AI). Nøkkelen lagres kun på denne enheten – aldri i databasen.
+        </p>
+        <input
+          type="password"
+          value={aiNokkel}
+          onChange={(e) => {
+            setAiNokkelLokal(e.target.value)
+            settAiNokkel(e.target.value)
+          }}
+          placeholder="API-nøkkel (f.eks. OpenRouter)"
+          className={`${feltKlasse} mt-2`}
+        />
+      </Card>
 
       <Card className="p-5">
         <h2 className="text-sm font-semibold text-slate-800">Konto</h2>

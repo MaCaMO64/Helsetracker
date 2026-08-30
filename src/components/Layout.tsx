@@ -9,6 +9,7 @@ import { Velkomst } from './Velkomst'
 const nav = [
   { to: '/', label: 'I dag', ikon: '📝', end: true },
   { to: '/historikk', label: 'Historikk', ikon: '📆', end: false },
+  { to: '/prover', label: 'Prøver', ikon: '🩸', end: false },
   { to: '/analyse', label: 'Analyse', ikon: '📊', end: false },
   { to: '/innstillinger', label: 'Innstillinger', ikon: '⚙️', end: false },
 ]
@@ -73,7 +74,7 @@ export function Layout() {
 
       {/* Mobil bunnavigasjon */}
       <nav className="safe-bottom fixed inset-x-0 bottom-0 z-20 border-t border-slate-200 bg-white md:hidden">
-        <div className="mx-auto grid max-w-3xl grid-cols-4">
+        <div className="mx-auto grid max-w-3xl grid-cols-5">
           {nav.map((n) => (
             <NavLink
               key={n.to}

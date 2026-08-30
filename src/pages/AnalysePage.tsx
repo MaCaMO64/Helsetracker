@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   useDoserPeriode,
   useGarminPeriode,
+  useLabResultater,
   useMedisiner,
   useSymptomer,
   useSymptomOppfPeriode,
@@ -66,6 +67,7 @@ export function AnalysePage() {
   const { data: doser = [] } = useDoserPeriode(fra, til)
   const { data: oppforinger = [] } = useSymptomOppfPeriode(fra, til)
   const { data: garminDager = [] } = useGarminPeriode(fra, til)
+  const { data: labResultater = [] } = useLabResultater(fra, til)
 
   // Bygg alle valgbare serier.
   const valg = useMemo<SerieValg[]>(() => {
@@ -94,8 +96,24 @@ export function AnalysePage() {
         erDose: false,
       })
     }
+    // Blodprøver: én serie per analyse (gruppert på kanon-nøkkel der den finnes).
+    const labGrupper = new Map<string, { label: string; enhet: string | null; serie: Serie }>()
+    for (const r of labResultater) {
+      const key = r.analyse_kanon ?? r.analyse.toLowerCase()
+      if (!labGrupper.has(key)) labGrupper.set(key, { label: r.analyse, enhet: r.enhet, serie: [] })
+      labGrupper.get(key)!.serie.push({ dato: r.dato, verdi: r.verdi })
+    }
+    for (const [key, g] of labGrupper) {
+      ut.push({
+        id: `lab:${key}`,
+        label: `${g.label} (prøve)`,
+        enhet: g.enhet ?? undefined,
+        serie: g.serie,
+        erDose: false,
+      })
+    }
     return ut
-  }, [medisiner, symptomer, doser, oppforinger, garminDager])
+  }, [medisiner, symptomer, doser, oppforinger, garminDager, labResultater])
 
   const doseValg = valg.filter((v) => v.erDose)
   const responsValg = valg.filter((v) => !v.erDose && v.serie.length > 0)
@@ -148,7 +166,11 @@ export function AnalysePage() {
   const lagOrd = lag === 0 ? 'samme dag' : `etter ${lag} ${lag === 1 ? 'dag' : 'dager'}`
   const bestBeskr = beste ? sammenhengOrd(beste.r) : null
 
-  const ingenData = medisiner.length === 0 && symptomer.length === 0 && garminDager.length === 0
+  const ingenData =
+    medisiner.length === 0 &&
+    symptomer.length === 0 &&
+    garminDager.length === 0 &&
+    labResultater.length === 0
 
   if (ingenData) {
     return (
@@ -393,6 +415,7 @@ export function AnalysePage() {
         doser={doser}
         oppforinger={oppforinger}
         garmin={garminDager}
+        labResultater={labResultater}
       />
     </div>
   )

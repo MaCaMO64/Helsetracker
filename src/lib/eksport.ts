@@ -2,7 +2,7 @@
 // klientfunksjoner for nedlasting og e-postsending. Rapporten er i plainspråk,
 // på linje med analysen ellers.
 
-import type { Dose, GarminDag, Medisin, Symptom, SymptomOppforing } from './types'
+import type { Dose, GarminDag, LabResultat, Medisin, Symptom, SymptomOppforing } from './types'
 import { dagerMellom, formaterDatoKort, leggTilDager } from './dates'
 import { doseSumPerDag, finnDoseendringer, foerEtter, garminSerie, type Serie } from './analyse'
 import { hentAuthToken } from './supabaseClient'
@@ -17,6 +17,7 @@ export interface EksportData {
   doser: Dose[]
   oppforinger: SymptomOppforing[]
   garmin: GarminDag[]
+  labResultater?: LabResultat[]
 }
 
 const GARMIN_KOL: { felt: keyof GarminDag; label: string }[] = [
@@ -59,11 +60,16 @@ export function byggCsv(data: EksportData): string {
   )
   const garminKart = new Map(garmin.map((g) => [g.dato, g]))
 
+  const labResultater = data.labResultater ?? []
+  const labLabels = [...new Set(labResultater.map((r) => r.analyse))]
+  const labKart = new Map(labResultater.map((r) => [`${r.dato}|${r.analyse}`, r.verdi]))
+
   const header = [
     'Dato',
     ...medisiner.map((m) => `${m.navn} (${m.enhet})`),
     ...symptomer.map((s) => s.navn),
     ...GARMIN_KOL.map((g) => g.label),
+    ...labLabels,
   ]
 
   const linjer = [header.map(csvFelt).join(',')]
@@ -74,6 +80,7 @@ export function byggCsv(data: EksportData): string {
       ...medisiner.map((m) => doseKart.get(m.id)?.get(d) ?? ''),
       ...symptomer.map((s) => symKart.get(s.id)?.get(d) ?? ''),
       ...GARMIN_KOL.map((k) => (g ? (g[k.felt] as number | null) ?? '' : '')),
+      ...labLabels.map((navn) => labKart.get(`${d}|${navn}`) ?? ''),
     ]
     linjer.push(rad.map(csvFelt).join(','))
   }
@@ -140,6 +147,22 @@ export function byggRapportHtml(data: EksportData): string {
     })
     .join('')
 
+  const lab = (data.labResultater ?? []).slice().sort((a, b) => (a.dato < b.dato ? 1 : -1))
+  const labSeksjon = lab.length
+    ? `<section><h3>Blodprøver</h3>
+      <table><thead><tr><th>Dato</th><th>Analyse</th><th>Verdi</th><th>Referanse</th></tr></thead>
+      <tbody>${lab
+        .map(
+          (r) =>
+            `<tr><td>${h(formaterDatoKort(r.dato))}</td><td>${h(r.analyse)}</td><td>${r.verdi}${
+              r.enhet ? ' ' + h(r.enhet) : ''
+            }</td><td>${r.ref_lav ?? ''}${r.ref_lav != null || r.ref_hoy != null ? '–' : ''}${
+              r.ref_hoy ?? ''
+            }</td></tr>`,
+        )
+        .join('')}</tbody></table></section>`
+    : ''
+
   return `<!doctype html><html lang="no"><head><meta charset="utf-8">
 <title>Helserapport</title>
 <style>
@@ -160,6 +183,7 @@ export function byggRapportHtml(data: EksportData): string {
     bruker ? ` · ${h(bruker)}` : ''
   } · Generert ${h(generert)}</p>
 ${medBlokker || '<p class="muted">Ingen medisiner registrert.</p>'}
+${labSeksjon}
 <p class="muted" style="margin-top:24px">Fullstendige daglige data (doser, symptomer og Garmin-målinger) ligger i den vedlagte CSV-fila.</p>
 <div class="ansvar">Dette er egenregistrerte data ment som utgangspunkt for samtale med lege. Tallene viser
 mønstre og samvariasjon – ikke årsak. Stoffskifteendringer slår gjerne inn over uker, og

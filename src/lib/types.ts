@@ -77,6 +77,20 @@ export interface GarminDag {
   oppdatert: string
 }
 
+export interface LabResultat {
+  id: string
+  dato: string
+  analyse: string
+  analyse_kanon: string | null
+  verdi: number
+  enhet: string | null
+  ref_lav: number | null
+  ref_hoy: number | null
+  kilde: string
+  notat: string | null
+  opprettet: string
+}
+
 export interface GarminSynkLogg {
   id: string
   kjort_kl: string
