@@ -1,5 +1,9 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react'
 
+/** Felles feltstil for input/select/textarea. */
+export const feltKlasse =
+  'w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-200'
+
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
 
 const variantKlasser: Record<Variant, string> = {
@@ -53,6 +57,43 @@ export function SideTittel({
         {undertittel && <p className="mt-0.5 text-sm text-slate-500">{undertittel}</p>}
       </div>
       {handling}
+    </div>
+  )
+}
+
+export function Modal({
+  åpen,
+  onClose,
+  tittel,
+  children,
+}: {
+  åpen: boolean
+  onClose: () => void
+  tittel: string
+  children: ReactNode
+}) {
+  if (!åpen) return null
+  return (
+    <div
+      className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
+      onClick={onClose}
+    >
+      <div
+        className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-white p-4 shadow-xl sm:rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-900">{tittel}</h2>
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            aria-label="Lukk"
+          >
+            ✕
+          </button>
+        </div>
+        {children}
+      </div>
     </div>
   )
 }

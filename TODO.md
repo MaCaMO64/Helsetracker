@@ -18,13 +18,14 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
 - [x] Dato-hjelpere (`src/lib/dates.ts` + tester)
 - [ ] Kjør migrasjonen mot Supabase (SQL Editor) og verifiser tabellene
 
-## M2 – Daglig logging
-- [ ] «I dag»: rask inntasting av doser + symptomer (store knapper, mobil)
-- [ ] Historikk: tidslinje/kalender med redigering
+## M2 – Daglig logging ✅
+- [x] «I dag»: rask inntasting av doser + symptomer (store knapper, mobil), med datovelger
+- [x] Historikk: liste over siste 30 dager med doser/symptomer/hendelser
+- [ ] Historikk: redigering direkte fra lista (kommer)
 
-## M3 – Definisjoner
-- [ ] Innstillinger: definer egne medisiner (enhet, standarddose) og symptomer (skala)
-- [ ] Hendelser (events): «økte dose til X», legebesøk – vises som markører
+## M3 – Definisjoner ✅ (delvis)
+- [x] Innstillinger: definer egne medisiner (enhet, standarddose) og symptomer (skala)
+- [ ] Hendelser (events): «økte dose til X», legebesøk – UI for å legge inn (vises alt i Historikk)
 
 ## M4 – Garmin-synk
 - [ ] Python-script (`python-garminconnect`/`garth`) – dagssammendrag

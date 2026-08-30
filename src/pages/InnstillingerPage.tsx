@@ -1,12 +1,17 @@
 import { useAuth } from '../lib/auth'
 import { APP_VERSJON } from '../lib/versjon'
 import { SideTittel, Card, Button } from '../components/ui'
+import { MedisinerSeksjon } from '../components/MedisinerSeksjon'
+import { SymptomerSeksjon } from '../components/SymptomerSeksjon'
 
 export function InnstillingerPage() {
   const { bruker, loggUt } = useAuth()
   return (
     <div className="space-y-4">
       <SideTittel tittel="Innstillinger" />
+
+      <MedisinerSeksjon />
+      <SymptomerSeksjon />
 
       <Card className="p-5">
         <h2 className="text-sm font-semibold text-slate-800">Konto</h2>
@@ -23,7 +28,6 @@ export function InnstillingerPage() {
       <Card className="p-5">
         <h2 className="text-sm font-semibold text-slate-800">Kommer</h2>
         <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-500">
-          <li>Definer dine medisiner og symptomer (M3)</li>
           <li>Garmin-synk: status og «synk nå» (M4)</li>
         </ul>
       </Card>

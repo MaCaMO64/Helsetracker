@@ -304,6 +304,17 @@ export function useLagreSymptomOppf() {
   })
 }
 
+export function useSlettSymptomOppf() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string): Promise<void> => {
+      const { error } = await klient().from('symptom_entries').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['symptomOppf'] }),
+  })
+}
+
 // ── Hendelser ──────────────────────────────────────────────────────
 export interface HendelseInn {
   id?: string
