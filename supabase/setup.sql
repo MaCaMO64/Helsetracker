@@ -125,7 +125,7 @@ create table if not exists lab_results (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   dato date not null,
-  analyse text not null,
+  "analyse" text not null,          -- «analyse» er reservert ord i Postgres → siteres
   analyse_kanon text,
   verdi numeric not null,
   enhet text,
@@ -134,7 +134,7 @@ create table if not exists lab_results (
   kilde text not null default 'manuell',
   notat text,
   opprettet timestamptz not null default now(),
-  unique (user_id, dato, analyse)
+  unique (user_id, dato, "analyse")
 );
 create index if not exists lab_results_user_dato_idx on lab_results(user_id, dato);
 
