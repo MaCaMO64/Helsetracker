@@ -8,54 +8,101 @@ import {
 import type { Symptom } from '../lib/types'
 import { Button, Card, Modal, feltKlasse } from './ui'
 
-function tomForm(): SymptomInn {
-  return { navn: '', skala_type: 'skala_0_10', aktiv: true }
+type Kategori = 'symptom' | 'faktor'
+
+interface Config {
+  tittel: string
+  addLabel: string
+  tomTekst: string
+  standardSkala: string
+  navnHint: string
 }
 
-function skalaTekst(s: Symptom): string {
-  return s.skala_type === 'ja_nei' ? 'Ja/Nei' : `Skala ${s.min_verdi}–${s.maks_verdi}`
+const CONFIG: Record<Kategori, Config> = {
+  symptom: {
+    tittel: '🤒 Symptomer',
+    addLabel: '+ Nytt symptom',
+    tomTekst: 'Ingen symptomer ennå. Legg til det du vil følge – f.eks. trøtthet, kvalme, hjernetåke.',
+    standardSkala: 'skala_0_10',
+    navnHint: 'f.eks. Trøtthet',
+  },
+  faktor: {
+    tittel: '🧭 Faktorer',
+    addLabel: '+ Ny faktor',
+    tomTekst:
+      'Faktorer er ytre ting som kan påvirke effekten av medisinen – f.eks. kaffe nær tabletten, kalsium/jern, eller biotin-tilskudd.',
+    standardSkala: 'ja_nei',
+    navnHint: 'f.eks. Kaffe nær tablett',
+  },
 }
 
-export function SymptomerSeksjon() {
-  const { data: symptomer = [], isLoading } = useSymptomer()
+// Vanlige faktorer (fra forskningen) – tilbys som hurtigoppsett.
+const VANLIGE_FAKTORER = [
+  'Kaffe nær tablett',
+  'Kalsium/jern nær tablett',
+  'Biotin-tilskudd',
+  'Glutenbrudd',
+]
+
+export function SymptomerSeksjon({ kategori = 'symptom' }: { kategori?: Kategori }) {
+  const cfg = CONFIG[kategori]
+  const { data: alle = [], isLoading } = useSymptomer()
   const lagre = useLagreSymptom()
   const slett = useSlettSymptom()
   const [redigerer, setRedigerer] = useState<SymptomInn | null>(null)
 
+  const liste = alle.filter((s) => (s.kategori ?? 'symptom') === kategori)
+
+  function tomForm(): SymptomInn {
+    return { navn: '', skala_type: cfg.standardSkala, kategori, aktiv: true }
+  }
+
   function lagreForm(e: FormEvent) {
     e.preventDefault()
     if (!redigerer || !redigerer.navn.trim()) return
-    // Sett min/maks ut fra skalatype (0–10 eller 0/1 for ja/nei).
     const jaNei = redigerer.skala_type === 'ja_nei'
     lagre.mutate(
-      {
-        ...redigerer,
-        navn: redigerer.navn.trim(),
-        min_verdi: 0,
-        maks_verdi: jaNei ? 1 : 10,
-      },
+      { ...redigerer, kategori, navn: redigerer.navn.trim(), min_verdi: 0, maks_verdi: jaNei ? 1 : 10 },
       { onSuccess: () => setRedigerer(null) },
     )
   }
 
+  function leggTilVanlige() {
+    const finnes = new Set(liste.map((s) => s.navn.toLowerCase()))
+    for (const navn of VANLIGE_FAKTORER) {
+      if (!finnes.has(navn.toLowerCase())) {
+        lagre.mutate({ navn, kategori: 'faktor', skala_type: 'ja_nei', min_verdi: 0, maks_verdi: 1 })
+      }
+    }
+  }
+
+  const manglerVanlige =
+    kategori === 'faktor' &&
+    VANLIGE_FAKTORER.some((n) => !liste.some((s) => s.navn.toLowerCase() === n.toLowerCase()))
+
   return (
     <Card className="p-5">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-800">🤒 Symptomer</h2>
-        <Button variant="secondary" onClick={() => setRedigerer(tomForm())}>
-          + Nytt symptom
-        </Button>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold text-slate-800">{cfg.tittel}</h2>
+        <div className="flex gap-2">
+          {manglerVanlige && (
+            <Button variant="ghost" onClick={leggTilVanlige}>
+              Legg til vanlige
+            </Button>
+          )}
+          <Button variant="secondary" onClick={() => setRedigerer(tomForm())}>
+            {cfg.addLabel}
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
         <p className="text-sm text-slate-400">Laster …</p>
-      ) : symptomer.length === 0 ? (
-        <p className="text-sm text-slate-500">
-          Ingen symptomer ennå. Legg til det du vil følge – f.eks. trøtthet, kvalme, hjernetåke.
-        </p>
+      ) : liste.length === 0 ? (
+        <p className="text-sm text-slate-500">{cfg.tomTekst}</p>
       ) : (
         <ul className="divide-y divide-slate-100">
-          {symptomer.map((s) => (
+          {liste.map((s) => (
             <li key={s.id} className="flex items-center justify-between gap-3 py-2">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
@@ -66,7 +113,9 @@ export function SymptomerSeksjon() {
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-slate-500">{skalaTekst(s)}</div>
+                <div className="text-xs text-slate-500">
+                  {s.skala_type === 'ja_nei' ? 'Ja/Nei' : `Skala ${s.min_verdi}–${s.maks_verdi}`}
+                </div>
               </div>
               <div className="flex shrink-0 gap-1">
                 <Button variant="ghost" onClick={() => setRedigerer(tilForm(s))}>
@@ -75,8 +124,7 @@ export function SymptomerSeksjon() {
                 <Button
                   variant="ghost"
                   onClick={() => {
-                    if (confirm(`Slette «${s.navn}»? Loggede verdier for dette slettes også.`))
-                      slett.mutate(s.id)
+                    if (confirm(`Slette «${s.navn}»? Loggede verdier slettes også.`)) slett.mutate(s.id)
                   }}
                 >
                   🗑️
@@ -90,7 +138,7 @@ export function SymptomerSeksjon() {
       <Modal
         åpen={redigerer !== null}
         onClose={() => setRedigerer(null)}
-        tittel={redigerer?.id ? 'Rediger symptom' : 'Nytt symptom'}
+        tittel={redigerer?.id ? `Rediger ${kategori}` : cfg.addLabel.replace('+ ', '')}
       >
         {redigerer && (
           <form onSubmit={lagreForm} className="space-y-3">
@@ -101,7 +149,7 @@ export function SymptomerSeksjon() {
                 className={feltKlasse}
                 value={redigerer.navn}
                 onChange={(e) => setRedigerer({ ...redigerer, navn: e.target.value })}
-                placeholder="f.eks. Trøtthet"
+                placeholder={cfg.navnHint}
               />
             </label>
             <label className="block">
@@ -143,6 +191,7 @@ function tilForm(s: Symptom): SymptomInn {
     id: s.id,
     navn: s.navn,
     skala_type: s.skala_type,
+    kategori: s.kategori,
     min_verdi: s.min_verdi,
     maks_verdi: s.maks_verdi,
     aktiv: s.aktiv,

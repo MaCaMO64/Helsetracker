@@ -16,9 +16,11 @@ export function IdagPage() {
   const { data: oppforinger = [] } = useSymptomOppforinger(dato)
 
   const aktiveMed = medisiner.filter((m) => m.aktiv)
-  const aktiveSym = symptomer.filter((s) => s.aktiv)
+  const aktiveSym = symptomer.filter((s) => s.aktiv && (s.kategori ?? 'symptom') === 'symptom')
+  const aktiveFaktorer = symptomer.filter((s) => s.aktiv && s.kategori === 'faktor')
   const laster = lasterMed || lasterSym
-  const ingenDefinisjoner = !laster && aktiveMed.length === 0 && aktiveSym.length === 0
+  const ingenDefinisjoner =
+    !laster && aktiveMed.length === 0 && aktiveSym.length === 0 && aktiveFaktorer.length === 0
 
   return (
     <div className="space-y-4">
@@ -82,6 +84,22 @@ export function IdagPage() {
               <h2 className="mb-1 text-sm font-semibold text-slate-800">🤒 Symptomer</h2>
               <div className="divide-y divide-slate-100">
                 {aktiveSym.map((s) => (
+                  <SymptomLogger
+                    key={s.id}
+                    symptom={s}
+                    oppforing={oppforinger.find((o) => o.symptom_id === s.id)}
+                    dato={dato}
+                  />
+                ))}
+              </div>
+            </Card>
+          )}
+
+          {aktiveFaktorer.length > 0 && (
+            <Card className="p-5">
+              <h2 className="mb-1 text-sm font-semibold text-slate-800">🧭 Faktorer</h2>
+              <div className="divide-y divide-slate-100">
+                {aktiveFaktorer.map((s) => (
                   <SymptomLogger
                     key={s.id}
                     symptom={s}

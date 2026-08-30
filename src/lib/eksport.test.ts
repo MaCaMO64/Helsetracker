@@ -21,6 +21,7 @@ function sym(over: Partial<Symptom>): Symptom {
     id: 's1',
     navn: 'Trøtthet',
     skala_type: 'skala_0_10',
+    kategori: 'symptom',
     min_verdi: 0,
     maks_verdi: 10,
     farge: null,

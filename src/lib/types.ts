@@ -28,6 +28,7 @@ export interface Symptom {
   id: string
   navn: string
   skala_type: string
+  kategori: string // 'symptom' | 'faktor'
   min_verdi: number
   maks_verdi: number
   farge: string | null

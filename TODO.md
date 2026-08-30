@@ -58,9 +58,17 @@ Milepæler. Hakk av og oppdater ved fullført arbeid.
 - [x] Integrert i Analyse (TSH/FT4 som kurver) og i eksport (CSV + rapport)
 - [ ] DU: kjør migrasjon 0002 i SQL Editor; (valgfritt) deploy `parse-blodprove` + AI-nøkkel for bildeimport
 
+## M8 – Faktorer + Garmin bulk-import ✅
+- [x] Loggbare «faktorer» (kaffe/kalsium/jern-timing, biotin, glutenbrudd …) via
+      kategori på symptoms (migrasjon 0003); egen seksjon i Innstillinger + «I dag»
+- [x] Hurtigknapp «legg til vanlige faktorer» (fra forskningen)
+- [x] Biotin-varsel på Prøver-siden (statisk tips + sterkt varsel hvis biotin logget nylig)
+- [x] Bulk-import av Garmin-historikk fra manuell dataeksport (zip → lokal parsing
+      `garminEksport.ts` + `garminZip.ts` → garmin_daily via RLS; forhåndsvisning) + tester
+- [ ] DU: kjør migrasjon 0003 i SQL Editor
+
 ## Senere / idébank
-- [ ] **Bulk-import av Garmin-historikk** via Garmins manuelle dataeksport (last opp
-      zip lokalt → parse DI-Connect-Wellness JSON/CSV → garmin_daily; privatvennlig backfill)
+- [ ] Hendelser-UI (preparatbytte/legebesøk) + hendelsesmarkører i Analyse
 - [ ] Kobling mot Matplanlegger (daglig ernæringsoppsummering join på dato)
 - [ ] Intraday Garmin-data (søvnfaser, HRV om natten) hvis daglig ikke er nok
 - [ ] Påminnelser om å logge

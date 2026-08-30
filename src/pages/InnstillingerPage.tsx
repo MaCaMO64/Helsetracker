@@ -18,7 +18,8 @@ export function InnstillingerPage() {
       <SideTittel tittel="Innstillinger" />
 
       <MedisinerSeksjon />
-      <SymptomerSeksjon />
+      <SymptomerSeksjon kategori="symptom" />
+      <SymptomerSeksjon kategori="faktor" />
       <GarminSeksjon />
 
       <Card className="p-5">

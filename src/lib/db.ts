@@ -193,6 +193,7 @@ export interface SymptomInn {
   id?: string
   navn: string
   skala_type?: string
+  kategori?: string
   min_verdi?: number
   maks_verdi?: number
   farge?: string | null
@@ -222,6 +223,7 @@ export function useLagreSymptom() {
       const felter = {
         navn: s.navn,
         skala_type: s.skala_type ?? 'skala_0_10',
+        kategori: s.kategori ?? 'symptom',
         min_verdi: s.min_verdi ?? 0,
         maks_verdi: s.maks_verdi ?? 10,
         farge: s.farge ?? null,
@@ -386,6 +388,26 @@ export function useGarminPeriode(fra: string, til: string) {
       if (error) throw error
       return (data ?? []) as GarminDag[]
     },
+  })
+}
+
+/** Bulk-upsert av Garmin-dager (fra manuell dataeksport). Chunker store sett. */
+export function useLagreGarminDager() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (rader: Record<string, unknown>[]): Promise<number> => {
+      if (rader.length === 0) return 0
+      const naa = new Date().toISOString()
+      const medTid = rader.map((r) => ({ ...r, oppdatert: naa }))
+      for (let i = 0; i < medTid.length; i += 500) {
+        const { error } = await klient()
+          .from('garmin_daily')
+          .upsert(medTid.slice(i, i + 500), { onConflict: 'user_id,dato' })
+        if (error) throw error
+      }
+      return rader.length
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['garmin'] }),
   })
 }
 

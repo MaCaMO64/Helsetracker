@@ -1,5 +1,11 @@
 import { useMemo, useState, type ChangeEvent } from 'react'
-import { useLabResultater, useLagreLabResultater, useSlettLabResultat } from '../lib/db'
+import {
+  useLabResultater,
+  useLagreLabResultater,
+  useSlettLabResultat,
+  useSymptomer,
+  useSymptomOppfPeriode,
+} from '../lib/db'
 import { finnProvedato, parseLabTekst, type LabUttrekk } from '../lib/blodprove'
 import { lesPdfTekst } from '../lib/pdf'
 import { lesBlodproveBilde } from '../lib/blodproveKlient'
@@ -28,6 +34,12 @@ export function ProverPage() {
   const { data: resultater = [] } = useLabResultater(fra, til)
   const lagre = useLagreLabResultater()
   const slett = useSlettLabResultat()
+
+  // Biotin-varsel: har brukeren logget en «biotin»-faktor de siste dagene?
+  const { data: symptomer = [] } = useSymptomer()
+  const { data: nyligeOppf = [] } = useSymptomOppfPeriode(leggTilDager(til, -3), til)
+  const biotinIds = new Set(symptomer.filter((s) => /biotin/i.test(s.navn)).map((s) => s.id))
+  const biotinNylig = nyligeOppf.some((o) => biotinIds.has(o.symptom_id) && o.verdi > 0)
 
   const [utkast, setUtkast] = useState<Utkast | null>(null)
   const [ventendeBilde, setVentendeBilde] = useState<string | null>(null)
@@ -136,6 +148,19 @@ export function ProverPage() {
   return (
     <div className="space-y-4">
       <SideTittel tittel="Blodprøver" undertittel="Importer fra Fürst / Helsenorge" />
+
+      {biotinNylig ? (
+        <div className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+          ⚠️ <strong>Du har logget biotin de siste dagene.</strong> Biotin kan gi falske
+          prøvesvar (typisk falsk lav TSH og falsk høy fritt T4/T3). Vurder å vente 2–3 dager
+          etter siste biotin-dose før du tar blodprøve.
+        </div>
+      ) : (
+        <div className="rounded-xl bg-slate-50 p-3 text-xs text-slate-500">
+          💡 Tips: pause eventuelle biotin-tilskudd 48–72 timer før blodprøve – ellers kan
+          svaret bli feil.
+        </div>
+      )}
 
       {/* Import */}
       <Card className="p-5">
