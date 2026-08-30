@@ -108,6 +108,33 @@ utløsende faktor. Finner man nye plager, er rådet en systematisk gjennomgang h
 lege (medikamenter, etterlevelse, biotin-stopp før prøve, ev. mage-/tarmutredning),
 ikke egenjustering.
 
+## 4. Kombinasjonsbehandling: T4 + T3 (Thybon)
+
+Thybon er merkenavn på **liotyronin (T3)**. Kombinasjon T4 + T3 er et eget, mye
+diskutert spor – særlig aktuelt for athyreote.
+
+- **Standard er fortsatt T4 alene.** Rundt 14 randomiserte studier viser *ikke*
+  gjennomgående bedre livskvalitet, kognisjon eller vekt av T4+T3 i uselekterte
+  pasienter, og alle retningslinjer (ATA/ETA/BTA/NICE) fraråder rutinemessig
+  kombinasjon [5,6].
+- **Men nyansene er reelle:** i studier *foretrekker* mange pasienter kombinasjon,
+  og athyreote (uten kjertel) har mer forstyrret FT3/FT4-ratio på T4 alene – et
+  fysiologisk argument, men ikke bevist klinisk overlegenhet.
+- **Genetikk (DIO2, Thr92Ala):** et hypotesegenererende signal om at enkelte
+  responderer bedre på T3-tillegg [24]. Ikke reprodusert konsistent; ingen
+  retningslinje anbefaler gentesting.
+- **Praktisk (hvis lege vurderer et forsøk):** T3 har kort halveringstid (~1 døgn)
+  → bør **deles på minst to doser daglig** (Thybon typisk ~5 µg × 2);
+  T4:T3-forhold ~**13–20:1**; mål en fysiologisk FT3/FT4-ratio med **TSH i (ikke
+  under)** referanseområdet; ta blodprøver som bunnverdier og suppler med EKG.
+  Godkjent depot-/«slow-release»-T3 finnes ikke ennå (under utprøving).
+- **Sikkerhet:** regulert liotyronin ser sikkerhetsmessig ut omtrent som
+  levotyroksin i en stor 2025-metaanalyse [25]; hovedrisikoen er **overdosering /
+  supprimert TSH** → hjerte (atrieflimmer) og bein.
+- **Konsensus 2021 [5]:** hvis forsøk – velg en misfornøyd pasient på adekvat
+  T4-dose med normal TSH, prioriter athyreote, T3 ≥2×/dag, 3–6 måneders forsøk med
+  EKG-monitorering, og avslutt hvis ingen tydelig bedring.
+
 ## Hva dette betyr for hva vi kan logge i appen
 
 Forskningen peker på konkrete **eksogene faktorer** som appen kan la deg spore, så
@@ -117,6 +144,8 @@ de kan ses i sammenheng med dose, symptomer og prøvesvar:
 - **Nye legemidler/kosttilskudd** – særlig **biotin** (både for interaksjon og som
   varsel om å pause før blodprøve), PPI, kalsium/jern, østrogen.
 - **Preparat-/generikabytte** som en «hendelse» på tidslinjen.
+- **Regimeendring** (oppstart/justering av T3/Thybon) som hendelse – og følg
+  FT3/FT4-ratio fra blodprøvene.
 - **Vektendring** (kan hentes fra Garmin).
 - **Cøliaki/glutenbrudd** – kobling mot matplanleggeren på sikt.
 
@@ -148,6 +177,8 @@ utvidelse, og et **biotin-før-prøve-varsel** er en liten, konkret forbedring.
 21. «Levothyroxine Therapy in Elderly Patients With Hypothyroidism» (atrieflimmer-risiko). *Front Endocrinol*, 2021. https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2021.641560/full
 22. «Levothyroxine and Bone» (70 Years of Levothyroxine). *NCBI Bookshelf* NBK585648. https://www.ncbi.nlm.nih.gov/books/NBK585648/
 23. Drugs.com – interaksjonssjekk «Creon + levothyroxine» (ingen interaksjon oppført). https://www.drugs.com/drug-interactions/creon-with-levothyroxine-1787-14033-1463-0.html
+24. Panicker V, et al. «Common Variation in the DIO2 Gene Predicts Baseline Psychological Well-Being and Response to Combination T4+T3 Therapy.» *JCEM*, 2009. https://academic.oup.com/jcem/article/94/5/1623/2598196
+25. Bahl S, et al. «Risk of Death and Adverse Effects in Patients on Liothyronine: A Multisource Systematic Review and Meta-analysis.» *JCEM*, 2025. https://pmc.ncbi.nlm.nih.gov/articles/PMC12527464/
 
 ---
 _Oppsummert fra litteratursøk. Verifiser med behandlende lege før noe endres._
