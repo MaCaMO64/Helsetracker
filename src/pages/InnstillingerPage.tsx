@@ -7,6 +7,7 @@ import { MedisinerSeksjon } from '../components/MedisinerSeksjon'
 import { SymptomerSeksjon } from '../components/SymptomerSeksjon'
 import { GarminSeksjon } from '../components/GarminSeksjon'
 import { PaaminnelseSeksjon } from '../components/PaaminnelseSeksjon'
+import { KontoDataSeksjon } from '../components/KontoDataSeksjon'
 import { VIS_VELKOMST } from '../components/Velkomst'
 import { useInstall } from '../lib/pwa'
 
@@ -53,6 +54,8 @@ export function InnstillingerPage() {
           </Button>
         </div>
       </Card>
+
+      <KontoDataSeksjon />
 
       <Card className="p-5">
         <h2 className="text-sm font-semibold text-slate-800">📱 Appen</h2>

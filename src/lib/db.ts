@@ -15,6 +15,7 @@ import type {
   Hendelse,
   LabResultat,
   Medisin,
+  RapportDeling,
   Symptom,
   SymptomOppforing,
 } from './types'
@@ -568,6 +569,49 @@ export function useSlettLabResultat() {
       if (error) throw error
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['lab'] }),
+  })
+}
+
+// ── Delbare legerapporter ──────────────────────────────────────────
+export function useDelinger() {
+  return useQuery({
+    queryKey: ['delinger'],
+    queryFn: async (): Promise<RapportDeling[]> => {
+      const { data, error } = await klient()
+        .from('report_shares')
+        .select('id,opprettet,utloper')
+        .order('opprettet', { ascending: false })
+      if (error) throw error
+      return (data ?? []) as RapportDeling[]
+    },
+  })
+}
+
+export function useOpprettDeling() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ html, dager }: { html: string; dager: number }): Promise<RapportDeling> => {
+      const utloper = new Date(Date.now() + dager * 86_400_000).toISOString()
+      const { data, error } = await klient()
+        .from('report_shares')
+        .insert({ html, utloper })
+        .select('id,opprettet,utloper')
+        .single()
+      if (error) throw error
+      return data as RapportDeling
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['delinger'] }),
+  })
+}
+
+export function useSlettDeling() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string): Promise<void> => {
+      const { error } = await klient().from('report_shares').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['delinger'] }),
   })
 }
 

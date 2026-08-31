@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { useAuth } from '../lib/auth'
+import { useDelinger, useOpprettDeling, useSlettDeling } from '../lib/db'
+import { formaterDatoKort } from '../lib/dates'
 import type {
   Dose,
   GarminDag,
@@ -32,6 +34,24 @@ export function EksportSeksjon(props: {
   const [epost, setEpost] = useState('')
   const [sender, setSender] = useState(false)
   const [melding, setMelding] = useState<{ ok: boolean; tekst: string } | null>(null)
+
+  const { data: delinger = [] } = useDelinger()
+  const opprettDeling = useOpprettDeling()
+  const slettDeling = useSlettDeling()
+  const [kopiert, setKopiert] = useState<string | null>(null)
+
+  function lagLenke() {
+    opprettDeling.mutate({ html: byggRapportHtml(data()), dager: 30 })
+  }
+  function kopier(id: string, url: string) {
+    navigator.clipboard
+      ?.writeText(url)
+      .then(() => {
+        setKopiert(id)
+        setTimeout(() => setKopiert(null), 1500)
+      })
+      .catch(() => {})
+  }
 
   function data(): EksportData {
     return {
@@ -118,6 +138,55 @@ export function EksportSeksjon(props: {
           Vanlig e-post er ikke kryptert. Send bare til en mottaker du stoler på.
         </p>
       </form>
+
+      <div className="mt-4 border-t border-slate-100 pt-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <label className="text-xs font-medium text-slate-700">Delbar lenke til lege</label>
+          <Button variant="secondary" onClick={lagLenke} disabled={opprettDeling.isPending}>
+            {opprettDeling.isPending ? 'Lager …' : 'Lag lenke (30 dager)'}
+          </Button>
+        </div>
+
+        {delinger.length > 0 && (
+          <ul className="mt-2 space-y-1.5">
+            {delinger.map((d) => {
+              const url = `${window.location.origin}/r/${d.id}`
+              const utlopt = d.utloper != null && new Date(d.utloper) < new Date()
+              return (
+                <li key={d.id} className="flex items-center gap-2">
+                  <input
+                    readOnly
+                    value={url}
+                    onFocus={(e) => e.currentTarget.select()}
+                    className={`${feltKlasse} flex-1 text-xs`}
+                  />
+                  <button
+                    onClick={() => kopier(d.id, url)}
+                    className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-teal-700 hover:bg-teal-50"
+                  >
+                    {kopiert === d.id ? '✓' : 'Kopier'}
+                  </button>
+                  <span className="w-20 shrink-0 text-right text-[11px] text-slate-400">
+                    {utlopt ? 'utløpt' : d.utloper ? `til ${formaterDatoKort(d.utloper.slice(0, 10))}` : ''}
+                  </span>
+                  <button
+                    onClick={() => slettDeling.mutate(d.id)}
+                    className="shrink-0 text-slate-300 hover:text-red-500"
+                    aria-label="Opphev lenke"
+                  >
+                    ✕
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        )}
+
+        <p className="mt-2 text-xs text-slate-400">
+          Et skrivebeskyttet øyeblikksbilde. Alle med lenken kan se rapporten til den utløper – del
+          kun med legen din. Trykk ✕ for å oppheve.
+        </p>
+      </div>
     </Card>
   )
 }

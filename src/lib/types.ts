@@ -94,6 +94,12 @@ export interface LabResultat {
   opprettet: string
 }
 
+export interface RapportDeling {
+  id: string
+  opprettet: string
+  utloper: string | null
+}
+
 export interface GarminSynkLogg {
   id: string
   kjort_kl: string

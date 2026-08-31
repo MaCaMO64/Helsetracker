@@ -77,8 +77,10 @@ Nye funksjoner:
       (hvilepuls 7 d, søvn, Body Battery, vekt, siste TSH, siste doseendring)
 - [x] **Dose-plan med planlagte klokkeslett** – valgfrie faste tidspunkter per medisin
       (migrasjon 0005) forhåndsutfyller riktig klokkeslett på «I dag»
-- [ ] **Full dataeksport + slett konto** (GDPR-portabilitet/sletting)
-- [ ] **Delbar skrivebeskyttet legelenke** (øyeblikksbilde) i stedet for e-postvedlegg
+- [x] **Full dataeksport + slett konto** (GDPR) – JSON-eksport av alt, «slett alle data»
+      (klient), og «slett konto helt» via Edge Function `slett-konto` (kaskade)
+- [x] **Delbar skrivebeskyttet legelenke** – tidsbegrenset øyeblikksbilde (migrasjon 0006
+      `report_shares`), offentlig rute `/r/:token`, opprett/kopier/opphev i Eksport
 
 ## Senere / idébank
 - [ ] «Creon / fordøyelsesenzymer» som loggbar hurtigfaktor
