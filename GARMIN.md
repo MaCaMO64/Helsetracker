@@ -68,3 +68,23 @@ eller i Supabase **Table Editor → garmin_daily**.
   «siste synk».
 - **Personvern:** service-role-nøkkelen gir full databasetilgang. Del den aldri,
   og ikke legg den i `.env`/koden – kun som GitHub-secret.
+
+## Robusthet – hvis synken stopper
+
+Tre lag med sikring:
+
+1. **Auto-deaktivering etter 60 dager (viktigst å kjenne til).** GitHub
+   deaktiverer *planlagte* workflows automatisk hvis repoet ikke har hatt
+   aktivitet på 60 dager, og sender deg en e-post om det. Workflowen
+   `keepalive.yml` motvirker dette: den lager en tom commit når repoet nærmer seg
+   grensen, så både den og Garmin-synken holdes aktive. Skjer det likevel: åpne
+   **Actions → Garmin-synk** og trykk **Enable workflow** (eller push en hvilken
+   som helst commit).
+2. **Dødmannsknapp i appen.** Hver kjøring skriver til `garmin_sync_log`, og
+   **Innstillinger → ⌚ Garmin** viser «siste vellykkede synk: X dager siden» –
+   gult varsel hvis det er mer enn 2 dager. Blir det stille, vet du det.
+3. **E-post ved feil.** GitHub varsler repo-eieren når en workflow-kjøring
+   feiler. Jobben har også `timeout-minutes: 15` så den ikke henger.
+
+Kjør uansett en **manuell synk** («Run workflow») etter lengre pauser for å tette
+hull, og re-bootstrap Garmin-token-et ca. årlig (se over).

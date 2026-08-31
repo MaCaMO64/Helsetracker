@@ -1,0 +1,34 @@
+name: Keepalive
+
+# GitHub deaktiverer PLANLAGTE workflows automatisk etter 60 dager uten
+# repo-aktivitet. Denne jobben holder dem i live: én gang i uka sjekker den hvor
+# lenge siden siste commit, og lager en tom commit HVIS det nærmer seg grensen
+# (≥ 50 dager). Da nullstilles 60-dagers-klokka for ALLE planlagte workflows
+# (inkl. Garmin-synken og denne). Bruker kun innebygd GITHUB_TOKEN.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # mandager 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tom commit hvis repoet nærmer seg 60 dager inaktivt
+        run: |
+          sist=$(git log -1 --format=%ct)
+          dager=$(( ( $(date +%s) - sist ) / 86400 ))
+          echo "Dager siden siste commit: $dager"
+          if [ "$dager" -ge 50 ]; then
+            git config user.name "keepalive[bot]"
+            git config user.email "actions@github.com"
+            git commit --allow-empty -m "keepalive: hold planlagte workflows aktive"
+            git push
+          else
+            echo "Repoet er aktivt nok – ingen commit nødvendig."
+          fi

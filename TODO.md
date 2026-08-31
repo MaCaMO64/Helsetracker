@@ -66,8 +66,9 @@ Robusthet / arkitektur:
       `scripts/db-smoke.mjs`, E2E-sjekkliste (`TESTING.md`); gjenstår: kjør mot ekte Fürst-PDF + Garmin-zip
 - [x] **#4 Kodesplitting** – dynamisk import av pdf.js + fflate, lazy Prøver/Analyse;
       pdf.js ute av precache (precache ~995→576 KiB)
-- [ ] **#5 Garmin-cron-fallgruve** – GH Actions deaktiverer planlagte workflows etter 60 dager uten
-      repo-aktivitet; vurder mer robust scheduler / dokumentér tydelig
+- [x] **#5 Garmin-cron-robusthet** – `keepalive.yml` (tom commit før 60-dagers-grensen holder
+      planlagte workflows aktive), `timeout-minutes` på synk-jobben, dødmannsknapp i appen,
+      GitHub-e-post ved feil; dokumentert i GARMIN.md
 - [x] **#6 Lås registrering** – app-allowlist (`VITE_TILLATT_EPOST`) + skru av offentlig signup i Supabase
 
 Nye funksjoner:
