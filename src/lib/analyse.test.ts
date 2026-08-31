@@ -6,6 +6,7 @@ import {
   foerEtter,
   korrelasjonPerLag,
   pearson,
+  ratioSerie,
   sammenhengOrd,
   type Serie,
 } from './analyse'
@@ -69,6 +70,18 @@ describe('korrelasjonPerLag', () => {
     expect(res[1].n).toBe(3)
     expect(res[1].r).toBeCloseTo(1)
     expect(besteLag(res, 3)?.lag).toBe(1)
+  })
+})
+
+describe('ratioSerie', () => {
+  it('regner FT3/FT4 per dato der begge finnes', () => {
+    const labs = [
+      { dato: '2026-01-01', analyse_kanon: 'ft3', verdi: 6 },
+      { dato: '2026-01-01', analyse_kanon: 'ft4', verdi: 15 },
+      { dato: '2026-01-01', analyse_kanon: 'tsh', verdi: 0.5 },
+      { dato: '2026-02-01', analyse_kanon: 'ft4', verdi: 18 }, // mangler ft3 → hoppes over
+    ]
+    expect(ratioSerie(labs)).toEqual([{ dato: '2026-01-01', verdi: 0.4 }])
   })
 })
 

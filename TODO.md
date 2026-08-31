@@ -85,7 +85,8 @@ Nye funksjoner:
 
 ## Senere / idébank
 - [ ] «Creon / fordøyelsesenzymer» som loggbar hurtigfaktor
-- [ ] Regimeendring (T3/Thybon) som eget hendelsestips + FT3/FT4-oppfølging
+- [x] Regimeendring (T3/Thybon) som egen hendelsestype (🔀) + «Stoffskifte-oppfølging»-kort
+      i Analyse (siste TSH/FT4/FT3 + FT3/FT4-ratio over tid med markører)
 - [ ] Kobling mot Matplanlegger (daglig ernæringsoppsummering join på dato)
 - [ ] Intraday Garmin-data (søvnfaser, HRV om natten) hvis daglig ikke er nok
 - [ ] Påminnelser om å logge

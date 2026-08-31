@@ -64,6 +64,42 @@ export function garminSerie(dager: GarminDag[], felt: keyof GarminDag): Serie {
   return out.sort(byDato)
 }
 
+// ── Blodprøve-serier ───────────────────────────────────────────────
+type LabRad = { dato: string; analyse_kanon: string | null; verdi: number }
+
+/** Tidsserie for én analyse (via kanon-nøkkel, f.eks. 'tsh' | 'ft4' | 'ft3'). */
+export function labSerie(labs: LabRad[], kanon: string): Serie {
+  return labs
+    .filter((r) => r.analyse_kanon === kanon)
+    .map((r) => ({ dato: r.dato, verdi: r.verdi }))
+    .sort(byDato)
+}
+
+/** FT3/FT4-ratio per dato der begge finnes (sentralt mål for tyreoidektomerte). */
+export function ratioSerie(labs: LabRad[]): Serie {
+  const perDato = new Map<string, { ft3?: number; ft4?: number }>()
+  for (const r of labs) {
+    if (r.analyse_kanon === 'ft3' || r.analyse_kanon === 'ft4') {
+      const e = perDato.get(r.dato) ?? {}
+      e[r.analyse_kanon] = r.verdi
+      perDato.set(r.dato, e)
+    }
+  }
+  const out: Serie = []
+  for (const [dato, e] of perDato) {
+    if (e.ft3 != null && e.ft4 != null && e.ft4 !== 0) {
+      out.push({ dato, verdi: Math.round((e.ft3 / e.ft4) * 1000) / 1000 })
+    }
+  }
+  return out.sort(byDato)
+}
+
+/** Siste verdi i en serie (mest nylige dato), eller null. */
+export function sistePunkt(serie: Serie): Punkt | null {
+  const s = serie.slice().sort(byDato)
+  return s.length ? s[s.length - 1] : null
+}
+
 export interface Doseendring {
   dato: string
   fra: number

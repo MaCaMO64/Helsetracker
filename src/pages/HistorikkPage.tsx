@@ -1,4 +1,5 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   useDoserPeriode,
   useHendelser,
@@ -15,9 +16,15 @@ import { SideTittel, Card, Button, Modal, TomTilstand, feltKlasse } from '../com
 
 const DAGER = 30
 
-const TYPE_IKON: Record<string, string> = { doseendring: '💊', legebesok: '🩺', notat: '📌' }
+const TYPE_IKON: Record<string, string> = {
+  doseendring: '💊',
+  regimeendring: '🔀',
+  legebesok: '🩺',
+  notat: '📌',
+}
 const TYPE_VALG = [
   { verdi: 'doseendring', navn: 'Doseendring' },
+  { verdi: 'regimeendring', navn: 'Regimeendring (T3/Thybon, preparatbytte)' },
   { verdi: 'legebesok', navn: 'Legebesøk' },
   { verdi: 'notat', navn: 'Notat' },
 ]
@@ -35,6 +42,15 @@ export function HistorikkPage() {
   const slettHendelse = useSlettHendelse()
 
   const [redigerer, setRedigerer] = useState<HendelseInn | null>(null)
+  const [sp, setSp] = useSearchParams()
+
+  // Åpne ny-hendelse-modal forhåndsutfylt fra lenke (?ny=regimeendring).
+  useEffect(() => {
+    const ny = sp.get('ny')
+    if (!ny) return
+    setRedigerer({ dato: iDag(), type: ny, tittel: '', notat: '' })
+    setSp({}, { replace: true })
+  }, [sp, setSp])
 
   const medNavn = useMemo(() => new Map(medisiner.map((m) => [m.id, m])), [medisiner])
   const symNavn = useMemo(() => new Map(symptomer.map((s) => [s.id, s])), [symptomer])

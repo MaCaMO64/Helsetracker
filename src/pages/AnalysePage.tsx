@@ -26,6 +26,7 @@ import { SideTittel, Card, Button, TomTilstand, feltKlasse } from '../components
 import { Graf, type GrafMarkor } from '../components/Graf'
 import { Spredning } from '../components/Spredning'
 import { EksportSeksjon } from '../components/EksportSeksjon'
+import { StoffskifteKort } from '../components/StoffskifteKort'
 
 const FARGE_A = '#0d9488' // teal (venstre akse)
 const FARGE_B = '#6366f1' // indigo (høyre akse)
@@ -411,6 +412,8 @@ export function AnalysePage() {
           </p>
         </Card>
       )}
+
+      <StoffskifteKort fra={fra} til={til} labs={labResultater} markorer={markorer} />
 
       <EksportSeksjon
         fra={fra}
