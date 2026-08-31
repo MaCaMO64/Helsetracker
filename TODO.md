@@ -59,7 +59,8 @@ Live: https://helsetracker.vercel.app · Repo: github.com/MaCaMO64/Helsetracker
 ## Forbedringer (fra åpen gjennomgang)
 
 Robusthet / arkitektur:
-- [ ] **#1 Ekte offline** – persistér data (IndexedDB / React Query-persister), ikke bare skrive-kø
+- [x] **#1 Ekte offline** – React Query-cache persistert til IndexedDB (14 d, forkastes
+      ved ny appversjon); appen kan åpnes uten nett og vise/logge mot siste data
 - [x] **#2 Optimistisk UI** (`onMutate`) for dose/symptom + robust fler-dose-DoseLogger (stabile utkast-rader)
 - [~] **#3 Verifiser risikable grenser** – flere parser-fixtures (blodprøve/Garmin),
       `scripts/db-smoke.mjs`, E2E-sjekkliste (`TESTING.md`); gjenstår: kjør mot ekte Fürst-PDF + Garmin-zip
@@ -74,7 +75,8 @@ Nye funksjoner:
       etter valgt tid (catch-up; ekte bakgrunnsvarsler er begrenset i PWA/iOS)
 - [x] **Hjem-skjerm-sammendrag/trender** – «gjenstår å logge» + trend-fliser
       (hvilepuls 7 d, søvn, Body Battery, vekt, siste TSH, siste doseendring)
-- [ ] **Dose-plan med planlagte klokkeslett** (ikke bare antall) → meningsfulle påminnelser + «tatt / ikke tatt»
+- [x] **Dose-plan med planlagte klokkeslett** – valgfrie faste tidspunkter per medisin
+      (migrasjon 0005) forhåndsutfyller riktig klokkeslett på «I dag»
 - [ ] **Full dataeksport + slett konto** (GDPR-portabilitet/sletting)
 - [ ] **Delbar skrivebeskyttet legelenke** (øyeblikksbilde) i stedet for e-postvedlegg
 

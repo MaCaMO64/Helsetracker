@@ -5,27 +5,30 @@ import type { Dose, Medisin } from '../lib/types'
 
 /** Én dose-rad (klokkeslett + mengde). `radId` er stabil: for nye rader er den
  *  utkast-id-en som ALSO blir server-id ved lagring, så raden ikke remonteres når
- *  den går fra utkast til lagret. Lagres når et felt forlates. */
+ *  den går fra utkast til lagret. `startTid` forhåndsutfyller klokkeslettet for
+ *  planlagte doser. Lagres når et felt forlates. */
 function DoseRad({
   medisin,
   dato,
   radId,
   dose,
+  startTid,
 }: {
   medisin: Medisin
   dato: string
   radId: string
   dose?: Dose
+  startTid?: string
 }) {
   const lagre = useLagreDose()
   const slett = useSlettDose()
-  const [tid, setTid] = useState(dose?.tidspunkt ?? '')
+  const [tid, setTid] = useState(dose?.tidspunkt ?? startTid ?? '')
   const [verdi, setVerdi] = useState(dose ? String(dose.dose) : '')
 
   useEffect(() => {
-    setTid(dose?.tidspunkt ?? '')
+    setTid(dose?.tidspunkt ?? startTid ?? '')
     setVerdi(dose ? String(dose.dose) : '')
-  }, [dose, dato])
+  }, [dose, dato, startTid])
 
   function lagreRad() {
     const t = verdi.trim().replace(',', '.')
@@ -80,8 +83,9 @@ function DoseRad({
   )
 }
 
-/** Alle doser for én medisin på en dag: lagrede rader + tomme utkast-rader opp til
- *  medisinens «doser per dag», med «+ Ny dose» for flere. */
+/** Alle doser for én medisin på en dag: lagrede rader + tomme utkast-rader.
+ *  Antall og klokkeslett styres av medisinens planlagte tidspunkter (hvis satt),
+ *  ellers av «doser per dag». «+ Ny dose» legger til flere. */
 export function DoseLogger({
   medisin,
   doser,
@@ -94,29 +98,40 @@ export function DoseLogger({
   klar: boolean
 }) {
   const [ekstra, setEkstra] = useState(0)
-  const [draftIds, setDraftIds] = useState<string[]>([])
+  const [drafts, setDrafts] = useState<{ id: string; tid: string }[]>([])
 
   const mine = doser
     .filter((d) => d.medication_id === medisin.id)
     .sort((a, b) => (a.tidspunkt ?? '').localeCompare(b.tidspunkt ?? ''))
   const mineNokkel = mine.map((d) => d.id).join(',')
-  const onsketTomme = Math.max(0, Math.max(1, medisin.doser_per_dag) - mine.length) + ekstra
+
+  const planlagte = [...(medisin.standard_tidspunkter ?? [])].filter(Boolean).sort()
+  const planlagteNokkel = planlagte.join(',')
+  const effektiv = planlagte.length > 0 ? planlagte.length : Math.max(1, medisin.doser_per_dag)
+  const onsketTomme = Math.max(0, effektiv - mine.length) + ekstra
 
   // Hold antall tomme utkast-rader riktig – uten å remontere de som fylles ut.
   useEffect(() => {
     if (!klar) return
-    const finnes = new Set(mineNokkel ? mineNokkel.split(',') : [])
-    setDraftIds((prev) => {
-      const aktive = prev.filter((id) => !finnes.has(id)) // dropp utkast som ble lagret
+    const idsIMine = mineNokkel ? mineNokkel.split(',') : []
+    const finnes = new Set(idsIMine)
+    const planArr = planlagteNokkel ? planlagteNokkel.split(',') : []
+    setDrafts((prev) => {
+      const aktive = prev.filter((d) => !finnes.has(d.id))
       if (aktive.length === onsketTomme) return aktive.length === prev.length ? prev : aktive
-      if (aktive.length < onsketTomme)
-        return [...aktive, ...Array.from({ length: onsketTomme - aktive.length }, () => nyId())]
+      if (aktive.length < onsketTomme) {
+        const nye = Array.from({ length: onsketTomme - aktive.length }, (_, j) => {
+          const slot = idsIMine.length + aktive.length + j
+          return { id: nyId(), tid: planArr[slot] ?? '' }
+        })
+        return [...aktive, ...nye]
+      }
       return aktive.slice(0, onsketTomme)
     })
-  }, [klar, onsketTomme, mineNokkel])
+  }, [klar, onsketTomme, mineNokkel, planlagteNokkel])
 
   const mineIds = new Set(mine.map((d) => d.id))
-  const synligeDrafts = draftIds.filter((id) => !mineIds.has(id))
+  const synlige = drafts.filter((d) => !mineIds.has(d.id))
 
   return (
     <div className="py-2.5">
@@ -135,8 +150,8 @@ export function DoseLogger({
       {mine.map((d) => (
         <DoseRad key={d.id} medisin={medisin} dato={dato} radId={d.id} dose={d} />
       ))}
-      {synligeDrafts.map((id) => (
-        <DoseRad key={id} medisin={medisin} dato={dato} radId={id} />
+      {synlige.map((d) => (
+        <DoseRad key={d.id} medisin={medisin} dato={dato} radId={d.id} startTid={d.tid} />
       ))}
     </div>
   )

@@ -11,7 +11,15 @@ import { Button, Card, Modal, feltKlasse } from './ui'
 const ENHETER = ['µg', 'mg', 'ml', 'tablett', 'dråper', 'IE']
 
 function tomForm(): MedisinInn {
-  return { navn: '', formaal: '', enhet: 'µg', standard_dose: null, aktiv: true, doser_per_dag: 1 }
+  return {
+    navn: '',
+    formaal: '',
+    enhet: 'µg',
+    standard_dose: null,
+    aktiv: true,
+    doser_per_dag: 1,
+    standard_tidspunkter: [],
+  }
 }
 
 export function MedisinerSeksjon() {
@@ -24,7 +32,11 @@ export function MedisinerSeksjon() {
     e.preventDefault()
     if (!redigerer || !redigerer.navn.trim()) return
     lagre.mutate(
-      { ...redigerer, navn: redigerer.navn.trim() },
+      {
+        ...redigerer,
+        navn: redigerer.navn.trim(),
+        standard_tidspunkter: (redigerer.standard_tidspunkter ?? []).filter(Boolean).sort(),
+      },
       { onSuccess: () => setRedigerer(null) },
     )
   }
@@ -159,6 +171,58 @@ export function MedisinerSeksjon() {
                 Antall felter som vises på «I dag». F.eks. 2 for T3/Thybon morgen + kveld.
               </span>
             </label>
+            <div>
+              <span className="mb-1 block text-sm font-medium text-slate-700">
+                Planlagte tidspunkter (valgfritt)
+              </span>
+              <div className="space-y-1.5">
+                {(redigerer.standard_tidspunkter ?? []).map((t, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <input
+                      type="time"
+                      value={t}
+                      onChange={(e) => {
+                        const tider = [...(redigerer.standard_tidspunkter ?? [])]
+                        tider[i] = e.target.value
+                        setRedigerer({ ...redigerer, standard_tidspunkter: tider })
+                      }}
+                      className={`${feltKlasse} w-32`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setRedigerer({
+                          ...redigerer,
+                          standard_tidspunkter: (redigerer.standard_tidspunkter ?? []).filter(
+                            (_, j) => j !== i,
+                          ),
+                        })
+                      }
+                      className="text-slate-300 hover:text-red-500"
+                      aria-label="Fjern tidspunkt"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() =>
+                  setRedigerer({
+                    ...redigerer,
+                    standard_tidspunkter: [...(redigerer.standard_tidspunkter ?? []), '08:00'],
+                  })
+                }
+              >
+                + Legg til tidspunkt
+              </Button>
+              <span className="mt-1 block text-xs text-slate-400">
+                Fyller ut riktig klokkeslett på «I dag» – f.eks. 08:00 og 20:00 for T3/Thybon.
+                Overstyrer «Doser per dag» når det er satt.
+              </span>
+            </div>
             <label className="flex items-center gap-2 text-sm text-slate-700">
               <input
                 type="checkbox"
@@ -191,6 +255,7 @@ function tilForm(m: Medisin): MedisinInn {
     standard_dose: m.standard_dose,
     aktiv: m.aktiv,
     doser_per_dag: m.doser_per_dag,
+    standard_tidspunkter: m.standard_tidspunkter,
     sortering: m.sortering,
   }
 }

@@ -11,6 +11,7 @@ export interface Medisin {
   farge: string | null
   aktiv: boolean
   doser_per_dag: number
+  standard_tidspunkter: string[]
   sortering: number
   opprettet: string
 }
