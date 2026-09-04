@@ -20,19 +20,36 @@ Kjøres av GitHub Actions daglig, og kan kjøres manuelt for å hente historikk.
 
 ### 1. Lag Garmin-token lokalt
 
+Bruk et **virtuelt miljø** – Garmin-pakkene drar med seg `curl_cffi`, som kan
+kollidere med andre Python-verktøy (f.eks. `yfinance`) hvis de installeres globalt:
+
 ```bash
 cd garmin_sync
-python -m pip install -r requirements.txt
-python bootstrap.py
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\python bootstrap.py
 ```
 
-Skriv inn Garmin-e-post, passord og MFA-koden. Scriptet skriver ut en lang
-token-streng. Kopier **hele** strengen.
+Skriv inn Garmin-e-post, passord og MFA-koden. Scriptet skriver ut en
+token-streng (JSON) **og** lagrer den i `garmin_sync/garmin_tokens.b64`
+(gitignorert) for lokal testing. Kopier **hele** strengen til GitHub-secret senere.
+
+### 1b. Test lokalt før du setter opp secrets (anbefalt)
+
+```bash
+DRY_RUN=1 .venv\Scripts\python sync.py
+```
+
+Dette logger inn på Garmin, henter siste dager og **skriver ut hva som ville blitt
+lagret** – uten å røre databasen og uten at du trenger Supabase-nøkler. Ser
+tallene riktige ut, går du videre. (Sett `DAGER=7` for flere dager.)
 
 ### 2. Finn din bruker-id og service-role-nøkkel i Supabase
 
-- **HT_USER_ID**: Supabase → **Authentication → Users** → klikk brukeren din →
-  kopier `UID` (en uuid).
+- **HT_USER_ID**: Supabase → **Authentication → Users** → kopier `UID` (en uuid)
+  til **kontoeieren**. Ved delt konto må dette være *eierens* UID, ikke en
+  medhjelpers – se `DELT_KONTO.md`. Bytter du eier senere, må denne oppdateres og
+  eksisterende `garmin_daily`-rader flyttes.
 - **SUPABASE_SERVICE_ROLE_KEY**: Supabase → **Project Settings → API** →
   «service_role» / «secret» (den hemmelige, IKKE den publishable). Behandle den
   som et passord.

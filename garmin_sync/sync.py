@@ -13,21 +13,45 @@ Garmin endrer noe. Derfor er alt her defensivt: manglende felter blir NULL, og
 en dag uten data hoppes over. Uansett utfall skrives en rad til garmin_sync_log.
 """
 
+import json
 import os
 import sys
 from datetime import date, datetime, timedelta, timezone
+from pathlib import Path
 
 import requests
 from garminconnect import Garmin
 
+# DRY_RUN=1: hent fra Garmin og skriv ut hva som VILLE blitt lagret, uten å røre
+# databasen. Da trengs kun et token (env GARMIN_TOKENS eller filen
+# garmin_tokens.b64 som bootstrap.py lager) – ingen Supabase-nøkler.
+DRY_RUN = os.environ.get("DRY_RUN", "").lower() in ("1", "true", "yes")
+
+
+def les_token() -> str:
+    t = os.environ.get("GARMIN_TOKENS")
+    if t:
+        return t
+    fil = Path(__file__).with_name("garmin_tokens.b64")
+    if fil.exists():
+        return fil.read_text(encoding="utf-8").strip()
+    raise SystemExit(
+        "Mangler Garmin-token. Kjør `python bootstrap.py` først, "
+        "eller sett miljøvariabelen GARMIN_TOKENS."
+    )
+
 
 class Cfg:
     def __init__(self) -> None:
-        self.tokens = os.environ["GARMIN_TOKENS"]
-        self.url = os.environ["SUPABASE_URL"].rstrip("/")
-        self.key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
-        self.uid = os.environ["HT_USER_ID"]
+        self.tokens = les_token()
         self.dager = int(os.environ.get("DAGER", "3"))
+        if DRY_RUN:
+            self.url = self.key = ""
+            self.uid = "dry-run"
+        else:
+            self.url = os.environ["SUPABASE_URL"].rstrip("/")
+            self.key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
+            self.uid = os.environ["HT_USER_ID"]
 
 
 def prov(f, *args):
@@ -106,6 +130,8 @@ def upsert_daily(cfg: Cfg, rader: list) -> None:
 
 
 def skriv_logg(cfg: Cfg, status: str, fra: str, til: str, antall: int, melding: str) -> None:
+    if DRY_RUN:
+        return
     try:
         requests.post(
             f"{cfg.url}/rest/v1/garmin_sync_log",
@@ -149,8 +175,12 @@ def main() -> None:
             else:
                 print(f"  {d}: ingen data")
 
-        if rader:
+        if rader and not DRY_RUN:
             upsert_daily(cfg, rader)
+        elif rader:
+            print("\n--- DRY RUN: dette ville blitt lagret i garmin_daily ---")
+            print(json.dumps(rader, indent=2, ensure_ascii=False))
+            print("--- ingenting er skrevet til databasen ---")
 
         melding = f"{len(rader)} av {len(datoer)} dager hadde data"
         skriv_logg(cfg, "ok", fra, til, len(rader), melding)

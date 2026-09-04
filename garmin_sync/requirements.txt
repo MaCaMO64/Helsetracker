@@ -1,4 +1,5 @@
 # Avhengigheter for Garmin-synken (kjøres i GitHub Actions og lokalt ved bootstrap).
-# garminconnect drar med seg garth (håndterer OAuth-tokens + MFA).
-garminconnect>=0.2.19
+# NB: API-et endret seg i 0.3 (egen tokenhåndtering via client.dumps()/login(),
+# ikke lenger garth). Koden forutsetter 0.3.x – derfor øvre grense.
+garminconnect>=0.3.11,<0.4
 requests>=2.31.0
