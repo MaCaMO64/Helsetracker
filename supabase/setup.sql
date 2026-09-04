@@ -171,3 +171,42 @@ create policy "egne delinger" on report_shares
 drop policy if exists "offentlig lesing" on report_shares;
 create policy "offentlig lesing" on report_shares
   for select using (utloper is null or utloper > now());
+
+-- ── Delt konto (migrasjon 0007) ────────────────────────────────────
+-- Én «eier» eier dataene; medlemmer ser/skriver til samme datasett.
+-- Er konto_medlemmer tom, gir eier_id() = auth.uid() → som før. Se DELT_KONTO.md.
+create table if not exists konto_medlemmer (
+  medlem_uid uuid primary key references auth.users(id) on delete cascade,
+  eier_uid uuid not null references auth.users(id) on delete cascade,
+  navn text,
+  opprettet timestamptz not null default now()
+);
+alter table konto_medlemmer enable row level security;
+drop policy if exists "se egen kobling" on konto_medlemmer;
+create policy "se egen kobling" on konto_medlemmer
+  for select using (medlem_uid = auth.uid() or eier_uid = auth.uid());
+
+create or replace function eier_id()
+returns uuid language sql stable security definer set search_path = public as $$
+  select coalesce(
+    (select m.eier_uid from konto_medlemmer m where m.medlem_uid = auth.uid()),
+    auth.uid()
+  );
+$$;
+grant execute on function eier_id() to authenticated;
+
+do $$
+declare t text;
+begin
+  foreach t in array array[
+    'medications','medication_doses','symptoms','symptom_entries',
+    'events','garmin_daily','garmin_sync_log','lab_results','report_shares'
+  ] loop
+    execute format('alter table %I alter column user_id set default eier_id()', t);
+    execute format('drop policy if exists "egne data" on %I', t);
+    execute format('drop policy if exists "egne delinger" on %I', t);
+    execute format(
+      $f$create policy "egne data" on %I for all
+         using (user_id = eier_id()) with check (user_id = eier_id())$f$, t);
+  end loop;
+end $$;

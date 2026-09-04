@@ -4,8 +4,10 @@ Personlig helse-tracker for å følge hvordan endringer i **medisindoser** (sær
 stoffskifte) påvirker allmenntilstanden – puls, søvn, energinivå og symptomer –
 slik at mønstre kan diskuteres med lege.
 
-Fungerer på PC og mobil som **PWA** (kan installeres på hjemskjermen). Én privat
-bruker, innlogging med magisk lenke på e-post.
+Fungerer på PC og mobil som **PWA** (kan installeres på hjemskjermen). Privat
+tilgang med magisk lenke på e-post; støtter **delt konto** – flere personer (f.eks.
+den det gjelder + en som hjelper til) jobber i samme datasett (se
+`DELT_KONTO.md`).
 
 > **Ikke medisinsk verktøy.** Appen viser mønstre og sammenhenger for samtale med
 > lege – den gir ikke diagnoser eller behandlingsråd, og korrelasjon er ikke

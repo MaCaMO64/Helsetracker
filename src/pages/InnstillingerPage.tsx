@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../lib/auth'
+import { useKontoInfo } from '../lib/db'
 import { APP_VERSJON } from '../lib/versjon'
 import { hentAiNokkel, settAiNokkel } from '../lib/aiNokkel'
 import { SideTittel, Card, Button, feltKlasse } from '../components/ui'
@@ -15,6 +16,7 @@ export function InnstillingerPage() {
   const { bruker, loggUt } = useAuth()
   const { kanInstallere, installer, installert, erIOS } = useInstall()
   const [aiNokkel, setAiNokkelLokal] = useState(hentAiNokkel())
+  const { data: konto } = useKontoInfo()
   return (
     <div className="space-y-4">
       <SideTittel tittel="Innstillinger" />
@@ -48,6 +50,12 @@ export function InnstillingerPage() {
         <p className="mt-1 text-sm text-slate-500">
           Innlogget som <strong>{bruker?.email ?? 'ukjent'}</strong>
         </p>
+        {konto?.erMedlem && (
+          <p className="mt-2 rounded-xl bg-teal-50 p-3 text-xs text-teal-800">
+            👥 <strong>Delt konto.</strong> Du ser og redigerer dataene til kontoeieren – begge
+            jobber i samme datasett.
+          </p>
+        )}
         <div className="mt-3">
           <Button variant="secondary" onClick={loggUt}>
             Logg ut

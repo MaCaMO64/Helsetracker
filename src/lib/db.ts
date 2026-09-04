@@ -572,6 +572,38 @@ export function useSlettLabResultat() {
   })
 }
 
+// ── Delt konto ─────────────────────────────────────────────────────
+export interface KontoInfo {
+  /** Er innlogget bruker koblet til en annens konto (dvs. medhjelper)? */
+  erMedlem: boolean
+  eierUid: string | null
+}
+
+export function useKontoInfo() {
+  return useQuery({
+    queryKey: ['kontoinfo'],
+    queryFn: async (): Promise<KontoInfo> => {
+      const k = klient()
+      const { data: sesjon } = await k.auth.getSession()
+      const uid = sesjon.session?.user.id ?? null
+      const { data, error } = await k
+        .from('konto_medlemmer')
+        .select('medlem_uid,eier_uid')
+        .eq('medlem_uid', uid ?? '')
+        .maybeSingle()
+      // Tabellen finnes kanskje ikke ennå (migrasjon 0007 ikke kjørt) – da er
+      // kontoen ikke delt.
+      if (error) return { erMedlem: false, eierUid: uid }
+      const rad = data as { eier_uid?: string } | null
+      return {
+        erMedlem: !!rad?.eier_uid && rad.eier_uid !== uid,
+        eierUid: rad?.eier_uid ?? uid,
+      }
+    },
+    retry: false,
+  })
+}
+
 // ── Delbare legerapporter ──────────────────────────────────────────
 export function useDelinger() {
   return useQuery({

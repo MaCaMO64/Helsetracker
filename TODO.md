@@ -47,8 +47,14 @@ Live: https://helsetracker.vercel.app · Repo: github.com/MaCaMO64/Helsetracker
 - `research/skjoldbrusk-langtidsrespons.md` + delbar nettside (Artifact):
   langtidsrespons, eksogene faktorer, Creon, kombinasjonsbehandling (T4+T3/Thybon)
 
+### M13 – Delt konto ✅
+- Migrasjon 0007: `konto_medlemmer` + `eier_id()`; defaults/RLS peker på eier_id()
+- To (eller flere) e-poster i allowlisten deler ett datasett; «Delt konto» vises
+  i Innstillinger. Oppsett: `DELT_KONTO.md`
+
 ## Database
-- [x] `supabase/setup.sql` kjørt (idempotent samlefil; migrasjoner 0001–0004)
+- [x] `supabase/setup.sql` kjørt (idempotent samlefil; migrasjoner 0001–0006)
+- [ ] DU: kjør `setup.sql` på nytt for delt konto (0007), og følg `DELT_KONTO.md`
 
 ## Gjenstår – dine valgfrie oppsett (når du vil bruke dem)
 - [ ] Garmin auto-synk: `bootstrap.py` + 4 GitHub-secrets + backfill (`GARMIN.md`)
