@@ -60,9 +60,18 @@ Vil du heller starte rent: bruk **Innstillinger → Dine data → «Slett alle d
 før du kobler kontoene.
 
 ### 6. Lås tilgangen til de to e-postene
-- **Vercel** → prosjektet → **Settings → Environment Variables**:
-  `VITE_TILLATT_EPOST` = `deg@epost.no,familiemedlem@epost.no`
-  (samme i `.env.local` lokalt). **Redeploy** etterpå – verdien bakes inn ved bygg.
+Lag hasher (e-poster skal ikke ligge i klartekst i appen – `VITE_*` er offentlig
+lesbart i nettleseren):
+
+```bash
+node scripts/hash-epost.mjs deg@epost.no familiemedlem@epost.no
+```
+
+- **Vercel** → prosjektet → **Settings → Environment Variables** → legg inn
+  `VITE_TILLATT_EPOST_HASH` med verdien scriptet skriver ut. Velg **Type: Config**
+  (ikke Secret – verdien er offentlig uansett, og Config kan leses tilbake).
+  Kryss av for alle miljøene. Fjern en eventuell gammel `VITE_TILLATT_EPOST`.
+  **Redeploy** etterpå – `VITE_*` bakes inn ved bygg.
 - **Supabase** → **Authentication → Sign In / Providers → Email** → skru **AV**
   «Allow new users to sign up». Begge brukerne finnes allerede, så de kommer inn.
 

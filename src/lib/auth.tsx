@@ -7,20 +7,7 @@ import {
 } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { erSupabaseKonfigurert, supabase } from './supabaseClient'
-
-// Valgfri allowlist: kommaseparerte e-poster i VITE_TILLATT_EPOST. Er den satt,
-// logges alle andre ut umiddelbart etter innlogging (forsvar i dybden på toppen
-// av at offentlig signup bør være AV i Supabase). Tom = slipp inn alle som klarer
-// å registrere seg (stol da på Supabase-innstillingen alene).
-const TILLATTE = ((import.meta.env.VITE_TILLATT_EPOST as string | undefined) ?? '')
-  .split(',')
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean)
-
-function epostTillatt(epost?: string | null): boolean {
-  if (TILLATTE.length === 0) return true
-  return !!epost && TILLATTE.includes(epost.toLowerCase())
-}
+import { erTillatt } from './tilgang'
 
 interface AuthVerdi {
   konfigurert: boolean
@@ -45,23 +32,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLaster(false)
       return
     }
-    // Godta kun sesjoner med tillatt e-post; ellers logg ut.
-    const godta = (s: Session | null) => {
-      if (s && !epostTillatt(s.user.email)) {
+    // Godta kun sesjoner med tillatt e-post; ellers logg ut. Sjekken er asynkron
+    // fordi tilgangslista sammenlignes med SHA-256-hasher (se tilgang.ts).
+    let avbrutt = false
+    const godta = async (s: Session | null) => {
+      if (s && !(await erTillatt(s.user.email))) {
+        if (avbrutt) return
         setAvvist(true)
         setSession(null)
         void supabase!.auth.signOut()
         return
       }
+      if (avbrutt) return
       setAvvist(false)
       setSession(s)
     }
-    supabase.auth.getSession().then(({ data }) => {
-      godta(data.session)
-      setLaster(false)
+    supabase.auth.getSession().then(async ({ data }) => {
+      await godta(data.session)
+      if (!avbrutt) setLaster(false)
     })
-    const { data } = supabase.auth.onAuthStateChange((_event, s) => godta(s))
-    return () => data.subscription.unsubscribe()
+    const { data } = supabase.auth.onAuthStateChange((_event, s) => void godta(s))
+    return () => {
+      avbrutt = true
+      data.subscription.unsubscribe()
+    }
   }, [])
 
   async function loggInn(epost: string): Promise<{ error?: string }> {
