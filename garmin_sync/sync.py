@@ -268,8 +268,14 @@ def main() -> None:
             rad = hent_dag(garmin, d, cfg.uid)
             if rad:
                 rader.append(rad)
-                print(f"  {d}: hvilepuls={rad['hvilepuls']} søvn={rad['sovn_min']}min "
-                      f"bodybattery={rad['body_battery_lav']}-{rad['body_battery_hoy']}")
+                def vis(felt, suffiks=""):
+                    v = rad.get(felt)
+                    return f"{v}{suffiks}" if v is not None else "-"
+
+                print(
+                    f"  {d}: hvilepuls={vis('hvilepuls')} sovn={vis('sovn_min', 'min')} "
+                    f"bodybattery={vis('body_battery_lav')}-{vis('body_battery_hoy')}"
+                )
             else:
                 print(f"  {d}: ingen data")
 

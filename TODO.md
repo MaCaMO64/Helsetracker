@@ -57,7 +57,8 @@ Live: https://helsetracker.vercel.app · Repo: github.com/MaCaMO64/Helsetracker
 - [ ] DU: kjør `setup.sql` på nytt for delt konto (0007), og følg `DELT_KONTO.md`
 
 ## Gjenstår – dine valgfrie oppsett (når du vil bruke dem)
-- [ ] Garmin auto-synk: `bootstrap.py` + 4 GitHub-secrets + backfill (`GARMIN.md`)
+- [x] Garmin auto-synk: token, 4 GitHub-secrets og 90-dagers backfill fullført;
+      nattlig cron kjører 05:30 UTC
 - [ ] E-postsending av rapport: Resend-nøkkel + deploy `send-rapport` + `VITE_FUNCTIONS_URL` (`EPOST.md`)
 - [ ] AI-import av blodprøve-bilder: deploy `parse-blodprove` + AI-nøkkel i Innstillinger
 - [ ] iOS: skarpt PNG-hjemskjermikon (SVG brukes nå)
@@ -68,8 +69,10 @@ Robusthet / arkitektur:
 - [x] **#1 Ekte offline** – React Query-cache persistert til IndexedDB (14 d, forkastes
       ved ny appversjon); appen kan åpnes uten nett og vise/logge mot siste data
 - [x] **#2 Optimistisk UI** (`onMutate`) for dose/symptom + robust fler-dose-DoseLogger (stabile utkast-rader)
-- [~] **#3 Verifiser risikable grenser** – flere parser-fixtures (blodprøve/Garmin),
-      `scripts/db-smoke.mjs`, E2E-sjekkliste (`TESTING.md`); gjenstår: kjør mot ekte Fürst-PDF + Garmin-zip
+- [~] **#3 Verifiser risikable grenser** – `scripts/db-smoke.mjs`, parser-fixtures,
+      E2E-sjekkliste (`TESTING.md`). **Garmin API-synk verifisert mot ekte konto**
+      (90/90 dager, sept. 2026 – avdekket garth→native API-brudd og float→integer-feil).
+      Gjenstår: ekte Fürst-PDF (blodprøve) og Garmin dataeksport-zip (bulk-import)
 - [x] **#4 Kodesplitting** – dynamisk import av pdf.js + fflate, lazy Prøver/Analyse;
       pdf.js ute av precache (precache ~995→576 KiB)
 - [x] **#5 Garmin-cron-robusthet** – `keepalive.yml` (tom commit før 60-dagers-grensen holder
