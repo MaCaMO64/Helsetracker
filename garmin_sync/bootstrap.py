@@ -21,9 +21,17 @@ Python-oppsettet ditt:
 """
 
 import getpass
+import sys
 from pathlib import Path
 
 from garminconnect import Garmin
+
+# Windows-konsollen bruker ofte cp1252 og takler ikke æøå.
+for _strom in (sys.stdout, sys.stderr):
+    try:
+        _strom.reconfigure(encoding="utf-8")
+    except (AttributeError, OSError):
+        pass
 
 
 def main() -> None:

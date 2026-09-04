@@ -86,6 +86,22 @@ eller i Supabase **Table Editor → garmin_daily**.
 - **Personvern:** service-role-nøkkelen gir full databasetilgang. Del den aldri,
   og ikke legg den i `.env`/koden – kun som GitHub-secret.
 
+## Hvilke felter fylles egentlig?
+
+Verifisert mot en ekte konto (dry-run, sept. 2026). Hva som kommer med avhenger av
+klokkemodell og hva den faktisk måler:
+
+| Fylles normalt | Ofte tomt – og hvorfor |
+|---|---|
+| hvilepuls, søvn (score + faser + minutter), stress, Body Battery (høy/lav), skritt, kalorier, respirasjon | **hrv / hrv_status** – HRV-endepunktet er tomt hvis klokka ikke måler HRV over natten |
+| | **spo2_snitt** – kun hvis pulsoksymeter er slått på for søvn |
+| | **vekt_kg** – krever en Garmin-koblet vekt (Index) eller manuell registrering |
+| | **puls_snitt** – Garmins dagssammendrag har ikke et daglig gjennomsnitt; bare hvilepuls og maks/min. Feltet står derfor som regel tomt |
+
+Tomme felter er ufarlige: appen hopper over dem i grafene, og en dag uten noen
+måling lagres ikke i det hele tatt. Er noe tomt du *forventer* å ha, sjekk først i
+Garmin Connect at målingen finnes der.
+
 ## Robusthet – hvis synken stopper
 
 Tre lag med sikring:

@@ -22,10 +22,18 @@ from pathlib import Path
 import requests
 from garminconnect import Garmin
 
+# Windows-konsollen bruker ofte cp1252, som ikke takler æøå eller «→».
+# Uten dette kan et ellers vellykket kjør krasje på siste utskrift.
+for _strom in (sys.stdout, sys.stderr):
+    try:
+        _strom.reconfigure(encoding="utf-8")
+    except (AttributeError, OSError):
+        pass
+
 # DRY_RUN=1: hent fra Garmin og skriv ut hva som VILLE blitt lagret, uten å røre
 # databasen. Da trengs kun et token (env GARMIN_TOKENS eller filen
 # garmin_tokens.b64 som bootstrap.py lager) – ingen Supabase-nøkler.
-DRY_RUN = os.environ.get("DRY_RUN", "").lower() in ("1", "true", "yes")
+DRY_RUN = os.environ.get("DRY_RUN", "").strip().lower() in ("1", "true", "yes")
 
 
 def les_token() -> str:
@@ -44,7 +52,8 @@ def les_token() -> str:
 class Cfg:
     def __init__(self) -> None:
         self.tokens = les_token()
-        self.dager = int(os.environ.get("DAGER", "3"))
+        # .strip(): «set DAGER=7 && …» i cmd.exe gir verdien «7 » med mellomrom.
+        self.dager = int((os.environ.get("DAGER") or "3").strip() or 3)
         if DRY_RUN:
             self.url = self.key = ""
             self.uid = "dry-run"
@@ -184,7 +193,7 @@ def main() -> None:
 
         melding = f"{len(rader)} av {len(datoer)} dager hadde data"
         skriv_logg(cfg, "ok", fra, til, len(rader), melding)
-        print(f"Ferdig: {melding} ({fra} → {til})")
+        print(f"Ferdig: {melding} ({fra} - {til})")
     except Exception as e:
         print(f"FEIL: {e}", file=sys.stderr)
         skriv_logg(cfg, "feil", fra, til, 0, str(e))
