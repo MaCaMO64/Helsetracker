@@ -99,6 +99,52 @@ def minutter(sekunder):
     return round(sekunder / 60) if sekunder else None
 
 
+# Kolonner som er «integer» i garmin_daily. Garmin sender flyttall for flere av
+# dem (f.eks. totalKilocalories = 1602.0), og Postgres avviser da HELE skrivingen
+# med «invalid input syntax for type integer». Vi runder derfor eksplisitt.
+INT_FELT = (
+    "hvilepuls",
+    "puls_snitt",
+    "sovn_score",
+    "sovn_min",
+    "dyp_sovn_min",
+    "lett_sovn_min",
+    "rem_sovn_min",
+    "vaaken_min",
+    "stress_snitt",
+    "body_battery_hoy",
+    "body_battery_lav",
+    "skritt",
+    "kalorier",
+    "spo2_snitt",
+)
+
+# Kolonner som er «numeric» – tåler desimaler, men må være tall (ikke tekst).
+FLOAT_FELT = ("hrv", "respirasjon_snitt", "vekt_kg")
+
+
+def tving_typer(rad: dict) -> dict:
+    """Rund int-kolonner og sikre at numeric-kolonner er tall. Ugyldige verdier
+    settes til None framfor å velte hele importen."""
+    for felt in INT_FELT:
+        v = rad.get(felt)
+        if v is None:
+            continue
+        try:
+            rad[felt] = int(round(float(v)))
+        except (TypeError, ValueError):
+            rad[felt] = None
+    for felt in FLOAT_FELT:
+        v = rad.get(felt)
+        if v is None:
+            continue
+        try:
+            rad[felt] = float(v)
+        except (TypeError, ValueError):
+            rad[felt] = None
+    return rad
+
+
 def hent_dag(garmin: Garmin, d: str, uid: str):
     """Bygg én garmin_daily-rad for dato d ('YYYY-MM-DD'), eller None hvis tom."""
     summary = prov(garmin.get_user_summary, d) or {}
@@ -139,6 +185,8 @@ def hent_dag(garmin: Garmin, d: str, uid: str):
         "oppdatert": datetime.now(timezone.utc).isoformat(),
     }
 
+    tving_typer(rad)
+
     # Hopp over dager helt uten data (unngår tomme rader).
     maalte = {k: v for k, v in rad.items() if k not in ("user_id", "dato", "oppdatert")}
     if not any(v is not None for v in maalte.values()):
@@ -166,7 +214,11 @@ def upsert_daily(cfg: Cfg, rader: list) -> None:
         if r.status_code in (401, 403):
             hint = "\nHint: SUPABASE_SERVICE_ROLE_KEY er feil eller ikke en service/secret-nøkkel."
         elif r.status_code == 400:
-            hint = "\nHint: sjekk HT_USER_ID (må være en gyldig uuid) og at setup.sql er kjørt."
+            hint = (
+                "\nHint: typefeil eller ukjent kolonne. Sier meldingen «invalid input syntax»,"
+                "\nsender Garmin en verdi som ikke passer kolonnetypen (se tving_typer())."
+                "\nSjekk ellers HT_USER_ID (gyldig uuid) og at setup.sql er kjørt."
+            )
         elif r.status_code == 404:
             hint = "\nHint: tabellen garmin_daily finnes ikke – kjør supabase/setup.sql."
         raise RuntimeError(
