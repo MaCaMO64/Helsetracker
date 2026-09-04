@@ -15,6 +15,7 @@ en dag uten data hoppes over. Uansett utfall skrives en rad til garmin_sync_log.
 
 import json
 import os
+import re
 import sys
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -49,6 +50,22 @@ def les_token() -> str:
     )
 
 
+UUID_MONSTER = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
+
+
+def krev(navn: str) -> str:
+    """Hent en påkrevd miljøvariabel, trimmet – med tydelig feil hvis den mangler."""
+    verdi = (os.environ.get(navn) or "").strip()
+    if not verdi:
+        raise SystemExit(
+            f"KONFIGFEIL: mangler {navn}.\n"
+            "Sjekk GitHub → Settings → Secrets and variables → Actions at alle fire finnes\n"
+            "med EKSAKT disse navnene: GARMIN_TOKENS, SUPABASE_URL,\n"
+            "SUPABASE_SERVICE_ROLE_KEY, HT_USER_ID."
+        )
+    return verdi
+
+
 class Cfg:
     def __init__(self) -> None:
         self.tokens = les_token()
@@ -58,9 +75,16 @@ class Cfg:
             self.url = self.key = ""
             self.uid = "dry-run"
         else:
-            self.url = os.environ["SUPABASE_URL"].rstrip("/")
-            self.key = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
-            self.uid = os.environ["HT_USER_ID"]
+            self.url = krev("SUPABASE_URL").rstrip("/")
+            self.key = krev("SUPABASE_SERVICE_ROLE_KEY")
+            self.uid = krev("HT_USER_ID")
+            if not UUID_MONSTER.match(self.uid):
+                raise SystemExit(
+                    f"KONFIGFEIL: HT_USER_ID ser ikke ut som en uuid (fikk {len(self.uid)} tegn).\n"
+                    "Hent «User UID» fra Supabase → Authentication → Users, uten mellomrom."
+                )
+            if not self.url.startswith("https://"):
+                raise SystemExit(f"KONFIGFEIL: SUPABASE_URL må starte med https:// (fikk: {self.url[:30]})")
 
 
 def prov(f, *args):
@@ -135,7 +159,20 @@ def upsert_daily(cfg: Cfg, rader: list) -> None:
         json=rader,
         timeout=60,
     )
-    r.raise_for_status()
+    if not r.ok:
+        # Ta med Supabase sin egen feilmelding – raise_for_status() skjuler den,
+        # og det er nettopp den som forteller hva som er galt (nøkkel, uuid, kolonne).
+        hint = ""
+        if r.status_code in (401, 403):
+            hint = "\nHint: SUPABASE_SERVICE_ROLE_KEY er feil eller ikke en service/secret-nøkkel."
+        elif r.status_code == 400:
+            hint = "\nHint: sjekk HT_USER_ID (må være en gyldig uuid) og at setup.sql er kjørt."
+        elif r.status_code == 404:
+            hint = "\nHint: tabellen garmin_daily finnes ikke – kjør supabase/setup.sql."
+        raise RuntimeError(
+            f"Supabase svarte {r.status_code} på skriving til garmin_daily: "
+            f"{r.text[:500]}{hint}"
+        )
 
 
 def skriv_logg(cfg: Cfg, status: str, fra: str, til: str, antall: int, melding: str) -> None:
